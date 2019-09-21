@@ -27,7 +27,7 @@ int main()
     char byteArray[] = {65, 66, 67, 68, 69, '\0'};
     TCPSocket.Send(byteArray);
     
-    // Receive package with length 1024.
+    // Receive packages with max length 1024
     char* message = TCPSocket.Receive(1024);
     
     // You should delete message after usage:
@@ -61,7 +61,7 @@ int main()
     char byteArray[] = {65, 66, 67, 68, 69, '\0'};
     UDPSocket.Send(byteArray);
 
-    // Receive package with length 1024.
+    // Receive packages with max length 1024
     char* message = UDPSocket.Receive(1024);
 
     // You should delete message after usage:
