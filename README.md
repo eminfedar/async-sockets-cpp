@@ -1,6 +1,6 @@
 # Simple-Socket
 Simple header-only Socket class in C++ for TCP & UDP.
-```c_cpp
+```cpp
 // Initialize socket.
 Socket TCPSocket(Socket::TCP);
 ```
@@ -9,7 +9,7 @@ Super Easy!
 ---
 
 ### TCP Client:
-```c_cpp
+```cpp
 #include "socket.h"
 
 int main()
@@ -43,7 +43,7 @@ int main()
 ```
 
 ### UDP Client:
-```c_cpp
+```cpp
 #include "socket.h"
 
 int main()
