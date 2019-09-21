@@ -23,7 +23,6 @@ int main()
     
     // Receive package with length 1024.
     char* message = TCPSocket.Receive(1024);
-    cout << "Message: " << message << endl;
     
     // You should delete message after usage:
     delete message;
@@ -58,7 +57,6 @@ int main()
 
     // Receive package with length 1024.
     char* message = UDPSocket.Receive(1024);
-    cout << "Message: " << message << endl;
 
     // You should delete message after usage:
     delete message;
