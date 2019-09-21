@@ -3,7 +3,7 @@ Simple header-only Socket class in C++ with TCP & UDP.
 
 # Usage
 ### TCP Client:
-```
+```c_cpp
 #include "socket.h"
 
 int main()
@@ -38,7 +38,7 @@ int main()
 ```
 
 ### UDP Client:
-```
+```c_cpp
 #include "socket.h"
 
 int main()
