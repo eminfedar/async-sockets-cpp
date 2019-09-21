@@ -1,9 +1,12 @@
 # Simple-Socket
-Simple header-only Socket class in C++ with TCP & UDP.
+Simple header-only Socket class in C++ for TCP & UDP.
 ```c_cpp
-    // Initialize socket.
-    Socket TCPSocket(Socket::TCP);
+// Initialize socket.
+Socket TCPSocket(Socket::TCP);
 ```
+Super Easy!
+
+---
 
 ### TCP Client:
 ```c_cpp
