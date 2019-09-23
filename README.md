@@ -74,3 +74,4 @@ int main()
 }
 
 ```
+**NOTE: Any usage or improvement ideas are welcome!** *(you can open issues if you want a feature)*
