@@ -1,4 +1,4 @@
-# Simple-Socket
+# Easy-Socket
 Simple header-only Socket class in C++ for TCP & UDP.
 ```cpp
 // Initialize socket.
