@@ -1,28 +1,48 @@
-#include "socket.h"
+#include "../easysocket/socket.h"
+#include <iostream>
+
+using namespace std;
 
 int main()
 {
     // Initialize socket.
-    Socket TCPSocket(Socket::TCP);
+    Socket tcpSocket;
 
     // Connect to the host.
-    TCPSocket.Connect("127.0.0.1", 8888);
+    tcpSocket.Connect("127.0.0.1", 8888, [&] {
+        cout << "Connected to the server successfully." << endl;
 
-    // Send String:
-    TCPSocket.Send("Test");
+        // Send String:
+        tcpSocket.Send("Hello Server!");
+    });
 
-    // Send Byte Array (char*):
-    char byteArray[] = {65, 66, 67, 68, 69, '\0'};
-    TCPSocket.Send(byteArray);
+    // Start receiving from the host.
+    tcpSocket.onMessageReceived = [&](string message) {
+        cout << "Message from the Server: " << message << endl;
+    };
 
-    // Receive package with length 1024.
-    char* message = TCPSocket.Receive(1024);
+    // On socket closed:
+    tcpSocket.onSocketClosed = [&]() {
+        cout << "Connection lost with the server!" << endl;
+    };
 
-    // !!! You should delete message after usage: !!!
-    delete message;
+    // Check if there is any error:
+    tcpSocket.onError = [&](string error) {
+        cerr << error << endl;
+    };
 
-    // Close the socket & connection.
-    TCPSocket.Close();
+    // You should do an input loop so the program will not end immediately:
+    // Because socket listenings are non-blocking.
+    string input;
+    cin >> input;
+    while (input != "exit")
+    {
+        cout << input << endl;
+        tcpSocket.Send(input);
+        cin >> input;
+    }
+
+    tcpSocket.Close();
 
     return 0;
 }
