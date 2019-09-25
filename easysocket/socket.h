@@ -2,10 +2,9 @@
 #define FDR_SOCKET_H
 
 #include "basesocket.h"
-#include <cstring>
+#include <string>
 #include <functional>
 #include <thread>
-#include <iostream>
 
 #define BUFFER_SIZE 0xFFFF
 
@@ -42,14 +41,22 @@ public:
                 this->onError("Error: Cannot send the message.");
 
             perror("send");
+
+            return;
         }
     }
 
     void Connect(string ipv4, uint16_t port, function<void()> onConnected)
     {
         if (inet_pton(AF_INET, ipv4.c_str(), &this->address.sin_addr) <= 0)
+        {
             if (this->onError)
                 this->onError("Invalid address. Address type not supported.");
+
+            perror("inet_pton");
+
+            return;
+        }
 
         this->Connect((uint32_t)this->address.sin_addr.s_addr, port, onConnected);
     }
@@ -61,8 +68,13 @@ public:
 
         // Try to connect.
         if (connect(this->sock, (const sockaddr *)&this->address, sizeof(this->address)) < 0)
+        {
             if (this->onError)
                 this->onError("Connection failed to the host.");
+            perror("connect");
+
+            return;
+        }
 
         // Connected to the server, fire the event.
         if (onConnected)
@@ -105,6 +117,9 @@ private:
         {
             if (socket->onError)
                 socket->onError(("Socket error! Error no (errno):" + errno));
+            perror("recv");
+
+            return;
         }
     }
 };

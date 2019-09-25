@@ -20,7 +20,7 @@ class BaseSocket
 protected:
     int sock = 0;
 
-    string ipToString(sockaddr_in addr)
+    static string ipToString(sockaddr_in addr)
     {
 
         char ip[INET_ADDRSTRLEN];
@@ -36,14 +36,6 @@ public:
         UDP = SOCK_DGRAM
     };
 
-    struct ReceivedData
-    {
-        string ip;
-        uint16_t port;
-
-        string message;
-    };
-
     sockaddr_in address;
     bool isClosed = false;
 
@@ -52,9 +44,15 @@ public:
     BaseSocket(SocketType sockType = TCP, int socketId = -1) : sock(socketId)
     {
         if (socketId < 0)
+        {
             if ((this->sock = socket(AF_INET, sockType, 0)) < 0)
+            {
                 if (this->onError)
                     this->onError("Socket initialization Error.");
+
+                perror("socket");
+            }
+        }
     }
 
     void Close()
@@ -65,11 +63,7 @@ public:
 
     string remoteAddress()
     {
-
-        char ip[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &this->address.sin_addr, ip, INET_ADDRSTRLEN);
-
-        return string(ip);
+        return ipToString(this->address);
     }
 
     int remotePort()

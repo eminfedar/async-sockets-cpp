@@ -2,7 +2,7 @@
 #define FDR_TCPSERVER_H
 
 #include "socket.h"
-#include <cstring>
+#include <string>
 #include <functional>
 #include <thread>
 
@@ -16,10 +16,6 @@ public:
 
     TCPServer() : BaseSocket(TCP)
     {
-    }
-    ~TCPServer()
-    {
-        cout << "DECONS!";
     }
 
     // Binding the server.
