@@ -6,8 +6,6 @@ Socket tcpSocket;
 ```
 Super Easy!
 
----
-
 ## Examples:
 
 #### TCP Client:
