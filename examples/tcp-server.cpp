@@ -15,7 +15,7 @@ int main()
         cout << newClient->remoteAddress() << ":" << newClient->remotePort() << "]" << endl;
 
         newClient->onMessageReceived = [newClient](string message) {
-            cout << newClient->remoteAddress() << " => " << message << endl;
+            cout << newClient->remoteAddress() << ":" << newClient->remotePort() << " => " << message << endl;
         };
 
         newClient->onError = [newClient](string error) {

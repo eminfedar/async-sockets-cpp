@@ -37,7 +37,6 @@ int main()
     cin >> input;
     while (input != "exit")
     {
-        cout << input << endl;
         tcpSocket.Send(input);
         cin >> input;
     }
