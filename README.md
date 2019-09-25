@@ -1,5 +1,5 @@
 # Asynchronous Sockets for C++
-Simple header-only, thread-based, super-lightweight, asynchronous Socket classes in C++ for TCP & UDP.
+Simple header-only, thread-based, asynchronous Socket classes in C++ for TCP & UDP.
 ```cpp
 // Initialize socket.
 Socket tcpSocket;
