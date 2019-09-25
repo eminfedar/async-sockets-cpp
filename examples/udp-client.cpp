@@ -5,8 +5,6 @@ using namespace std;
 
 int main()
 {
-    try
-    {
         // Our constants:
         const string IP = "127.0.0.1";
         const uint16_t PORT = 8888;
@@ -40,11 +38,6 @@ int main()
 
         // Close the socket.
         udpSocket.Close();
-    }
-    catch (const char *exception)
-    {
-        std::cerr << exception << std::endl;
-    }
 
     return 0;
 }

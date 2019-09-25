@@ -5,9 +5,6 @@ using namespace std;
 
 int main()
 {
-    try
-    {
-
         // Initialize server socket..
         UDPServer udpServer;
 
@@ -33,11 +30,6 @@ int main()
         }
 
         udpServer.Close();
-    }
-    catch (const char *exception)
-    {
-        std::cerr << exception << std::endl;
-    }
 
     return 0;
 }
