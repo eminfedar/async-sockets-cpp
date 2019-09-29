@@ -1,4 +1,4 @@
-#include "../easysocket/udpsocket.h"
+#include <udpsocket.h>
 #include <iostream>
 
 using namespace std;

@@ -1,4 +1,4 @@
-#include "../easysocket/socket.h"
+#include <socket.h>
 #include <iostream>
 
 using namespace std;

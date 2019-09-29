@@ -1,5 +1,5 @@
-#include "../easysocket/tcpserver.h"
-#include "../easysocket/socket.h"
+#include <tcpserver.h>
+#include <socket.h>
 #include <iostream>
 
 using namespace std;
