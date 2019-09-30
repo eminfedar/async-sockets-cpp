@@ -1,0 +1,55 @@
+#!make
+
+#OS Commands
+define NoTrailSlash
+$(patsubst %\\,%,$(patsubst %/,%,$(1)))
+endef
+define MakeExe
+$(1)$(EXEEXT)
+endef
+
+#If Windows
+ifeq ($(OS), Windows_NT)
+
+DLLEXT	:= .dll
+EXEEXT	:= .exe
+
+define ReplaceSlash
+$(subst /,\\,$(1))
+endef
+define MakeLib
+$(1)$(DLLEXT)
+endef
+define RM
+-del /F /Q $(call ReplaceSlash,$(call NoTrailSlash,$(1)))
+endef
+define MD
+-mkdir $(call ReplaceSlash,$(call NoTrailSlash,$(1)))
+endef
+define CP
+-robocopy $(call ReplaceSlash,$(1)) $(call ReplaceSlash,$(2)) /E /is
+endef
+
+else
+#If not Windows, assume Linux
+
+DLLEXT	:= .so
+EXEEXT	:=
+
+define ReplaceSlash
+$(subst \\,/,$(1))
+endef
+define MakeLib
+lib$(1)$(DLLEXT)
+endef
+define RM
+rm -rf $(1)
+endef
+define MD
+mkdir -p $(1)
+endef
+define CP
+cp -rf $(1) $(2)
+endef
+
+endif
