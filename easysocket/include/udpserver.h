@@ -11,8 +11,8 @@ class EASYSOCKET_API UDPServer : public UDPSocket
 public:
     UDPServer();
 
-    void Bind(int port);
-    void Bind(const char *address, std::uint16_t port);
+    void Bind(int port, FDR_ON_ERROR);
+    void Bind(const char *address, std::uint16_t port, FDR_ON_ERROR);
 };
 
 #endif

@@ -11,15 +11,18 @@ int main()
         udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
             cout << ipv4 << ":" << port << " => " << message << endl;
 
-            udpServer.SendTo("I got your UDP message!", ipv4, port);
-        };
-
-        udpServer.onError = [&](string error) {
-            cerr << error << endl;
+            udpServer.SendTo("I got your UDP message!", ipv4, port,
+                // Error handling while sending:
+                [](int errorCode, std::string errorMessage){
+                    cerr << errorMessage << endl;
+                }
+            );
         };
 
         // Bind the server to a port.
-        udpServer.Bind(8888);
+        udpServer.Bind(8888, [](int errorCode, std::string errorMessage){
+            cerr << errorMessage << endl;
+        });
 
         // You should do an input loop so the program will not terminated immediately:
         string input;

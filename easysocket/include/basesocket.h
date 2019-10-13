@@ -15,6 +15,9 @@
 #include <string>
 #include <functional>
 
+#define FDR_UNUSED(expr){ (void)(expr); } 
+#define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage)}
+
 class EASYSOCKET_API BaseSocket
 {
 protected:
@@ -32,9 +35,7 @@ public:
     sockaddr_in address;
     bool isClosed = false;
 
-    std::function<void(std::string)> onError;
-
-    BaseSocket(SocketType sockType = TCP, int socketId = -1);
+    BaseSocket(FDR_ON_ERROR, SocketType sockType = TCP, int socketId = -1);
 
     void Close();
 

@@ -1,37 +1,24 @@
 #include <udpsocket.h>
 
-UDPSocket::UDPSocket(
-    int socketId
-) :
-    BaseSocket(UDP, socketId)
+UDPSocket::UDPSocket(std::function<void(int, std::string)> onError, int socketId) : BaseSocket(onError, UDP, socketId)
 {
     std::thread receivingThread(Receive, this);
     receivingThread.detach();
 }
 
-void
-UDPSocket::SendTo(
-    std::string message,
-    std::string ipv4,
-    uint16_t port
-) {
-    this->SendTo(message.c_str(), message.length(), ipv4, port);
+void UDPSocket::SendTo(std::string message, std::string ipv4, uint16_t port, std::function<void(int, std::string)> onError)
+{
+    this->SendTo(message.c_str(), message.length(), ipv4, port, onError);
 }
 
-void
-UDPSocket::SendTo(
-    const char *bytes,
-    size_t byteslength,
-    std::string ipv4,
-    uint16_t port
-) {
+void UDPSocket::SendTo(const char *bytes, size_t byteslength, std::string ipv4, uint16_t port, std::function<void(int, std::string)> onError)
+{
     sockaddr_in hostAddr;
 
     if (inet_pton(AF_INET, ipv4.c_str(), &hostAddr.sin_addr) <= 0)
     {
-        if (this->onError)
-            this->onError("Invalid IP address. (Required: xxx.yyy.zzz.www)");
-        perror("inet_pton");
+        onError(errno, "Invalid IP address.");
+        return;
     }
 
     hostAddr.sin_port = htons(port);
@@ -39,14 +26,12 @@ UDPSocket::SendTo(
 
     if (sendto(this->sock, bytes, byteslength, 0, (sockaddr *)&hostAddr, sizeof(hostAddr)) < 0)
     {
-        if (this->onError)
-            this->onError("Error: Cannot send message to the address.");
-        perror("sendto");
+        onError(errno, "Cannot send message to the address.");
+        return;
     }
 }
 
-void
-UDPSocket::Receive(UDPSocket *udpSocket)
+void UDPSocket::Receive(UDPSocket *udpSocket)
 {
     sockaddr_in hostAddr;
     socklen_t hostAddrSize = sizeof(hostAddr);
@@ -58,9 +43,8 @@ UDPSocket::Receive(UDPSocket *udpSocket)
         int messageLength = recvfrom(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0, (sockaddr *)&hostAddr, &hostAddrSize);
         if (messageLength < 0)
         {
-            if (udpSocket->onError)
-                udpSocket->onError("Error: Socket receive error.");
             perror("recvfrom");
+            return;
         }
         else
         {

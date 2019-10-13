@@ -15,10 +15,10 @@ class EASYSOCKET_API UDPSocket : public BaseSocket
 public:
     std::function<void(std::string, std::string, std::uint16_t)> onMessageReceived;
 
-    UDPSocket(int socketId = -1);
+    UDPSocket(FDR_ON_ERROR, int socketId = -1);
 
-    void SendTo(std::string message, std::string ipv4, uint16_t port);
-    void SendTo(const char *bytes, size_t byteslength, std::string ipv4, uint16_t port);
+    void SendTo(std::string message, std::string ipv4, uint16_t port, FDR_ON_ERROR);
+    void SendTo(const char *bytes, size_t byteslength, std::string ipv4, uint16_t port, FDR_ON_ERROR);
 
 private:
     static void Receive(UDPSocket *udpSocket);

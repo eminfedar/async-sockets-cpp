@@ -1,5 +1,4 @@
 #include <tcpserver.h>
-#include <socket.h>
 #include <iostream>
 
 using namespace std;
@@ -10,7 +9,7 @@ int main()
     TCPServer tcpServer;
 
     // When a new client connected:
-    tcpServer.onNewConnection = [&](Socket *newClient) {
+    tcpServer.onNewConnection = [&](TCPSocket *newClient) {
         cout << "New client: [";
         cout << newClient->remoteAddress() << ":" << newClient->remotePort() << "]" << endl;
 
@@ -18,24 +17,20 @@ int main()
             cout << newClient->remoteAddress() << ":" << newClient->remotePort() << " => " << message << endl;
         };
 
-        newClient->onError = [newClient](string error) {
-            cout << "ERR on socket:" << newClient->remoteAddress() << " => " << error << endl;
-        };
-
         newClient->onSocketClosed = [newClient]() {
             cout << "Socket closed:" << newClient->remoteAddress() << endl;
         };
     };
 
-    tcpServer.onError = [&](string error) {
-        cerr << error << endl;
-    };
-
     // Bind the server to a port.
-    tcpServer.Bind(8888);
+    tcpServer.Bind(8888, [](int errorCode, std::string errorMessage){
+        cerr << errorMessage << endl;
+    });
 
     // Start Listening the server.
-    tcpServer.Listen();
+    tcpServer.Listen([](int errorCode, std::string errorMessage){
+        cerr << errorMessage << endl;
+    });
 
     // You should do an input loop so the program will not terminated immediately:
     string input;

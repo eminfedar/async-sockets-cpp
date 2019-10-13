@@ -23,10 +23,6 @@ int main()
             cout << ipv4 << ":" << port << " => " << message << endl;
         };
 
-        udpSocket.onError = [&](string error) {
-            cout << error << endl;
-        };
-
         // You should do an input loop so the program will not terminated immediately:
         string input;
         cin >> input;

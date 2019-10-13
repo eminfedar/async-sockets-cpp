@@ -1,30 +1,21 @@
 #include <tcpserver.h>
 
-TCPServer::TCPServer() :
-    BaseSocket(TCP)
+TCPServer::TCPServer(std::function<void(int, std::string)> onError) : BaseSocket(onError, TCP)
 {
-    
+
 }
 
-void
-TCPServer::Bind(
-    int port
-) {
-    this->Bind("0.0.0.0", port);
+void TCPServer::Bind(int port, std::function<void(int, std::string)> onError)
+{
+    this->Bind("0.0.0.0", port, onError);
 }
 
-void
-TCPServer::Bind(
-    const char* address,
-    uint16_t port
-) {
+void TCPServer::Bind(const char* address, uint16_t port, std::function<void(int, std::string)> onError)
+{
     if (inet_pton(AF_INET, address, &this->address.sin_addr) <= 0)
     {
-        if (this->onError)
-        {
-            this->onError("Error: Invalid address. Address type not supported.");
-            return;
-        }
+        onError(errno, "Invalid address. Address type not supported.");
+        return;
     }
 
     this->address.sin_family = AF_INET;
@@ -32,32 +23,24 @@ TCPServer::Bind(
 
     if (bind(this->sock, (const sockaddr *)&this->address, sizeof(this->address)) < 0)
     {
-        if (this->onError)
-            this->onError("Error: Cannot bind the socket.");
-        perror("bind");
-
+        onError(errno, "Cannot bind the socket.");
         return;
     }
 }
 
-void
-TCPServer::Listen()
+void TCPServer::Listen(std::function<void(int, std::string)> onError)
 {
     if (listen(this->sock, 10) < 0)
     {
-        if (this->onError)
-        {
-            this->onError("Error: Server can't listen the socket.");
-            return;
-        }
+        onError(errno, "Error: Server can't listen the socket.");
+        return;
     }
 
-    std::thread acceptThread(Accept, this);
+    std::thread acceptThread(Accept, this, onError);
     acceptThread.detach();
 }
 
-void
-TCPServer::Accept(TCPServer *server)
+void TCPServer::Accept(TCPServer *server, std::function<void(int, std::string)> onError)
 {
     sockaddr_in newSocketInfo;
     socklen_t newSocketInfoLength = sizeof(newSocketInfo);
@@ -67,14 +50,11 @@ TCPServer::Accept(TCPServer *server)
     {
         if ((newSock = accept(server->sock, (sockaddr *)&newSocketInfo, &newSocketInfoLength)) < 0)
         {
-            if (server->onError)
-            {
-                server->onError("Error: Cannot accept a new connection.");
-                return;
-            }
+            onError(errno, "Error while accepting a new connection.");
+            return;
         }
 
-        Socket *newSocket = new Socket(newSock);
+        TCPSocket *newSocket = new TCPSocket([](int e, std::string er){}, newSock);
         newSocket->setAddressStruct(newSocketInfo);
 
         server->onNewConnection(newSocket);
