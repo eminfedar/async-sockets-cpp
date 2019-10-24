@@ -1,7 +1,7 @@
 # Asynchronous Sockets for C++
 Simple, thread-based, non-blocking asynchronous Client-Server classes in C++ for TCP & UDP.
 ```cpp
-// Initialize socket.
+// Initialize a tcp socket.
 TCPSocket tcpSocket;
 
 // Connect to the host.
@@ -15,6 +15,7 @@ tcpSocket.Connect("127.0.0.1", 8888, [&] {
 Super Easy!
 
 ## Examples:
+![Examples](https://github.com/eminfedar/async-sockets-cpp/raw/development-unstable/img/programs.png)
 You can compile all the examples by just going in the `examples/` directory and run `make` in terminal:
 - [examples/tcp-client.cpp](https://github.com/eminfedar/async-sockets-cpp/blob/master/examples/tcp-client.cpp)
 - [examples/tcp-server.cpp](https://github.com/eminfedar/async-sockets-cpp/blob/master/examples/tcp-server.cpp)
