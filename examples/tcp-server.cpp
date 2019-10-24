@@ -1,5 +1,4 @@
-#include "../easysocket/tcpserver.h"
-#include "../easysocket/socket.h"
+#include <tcpserver.h>
 #include <iostream>
 
 using namespace std;
@@ -10,7 +9,7 @@ int main()
     TCPServer tcpServer;
 
     // When a new client connected:
-    tcpServer.onNewConnection = [&](Socket *newClient) {
+    tcpServer.onNewConnection = [&](TCPSocket *newClient) {
         cout << "New client: [";
         cout << newClient->remoteAddress() << ":" << newClient->remotePort() << "]" << endl;
 
@@ -18,17 +17,9 @@ int main()
             cout << newClient->remoteAddress() << ":" << newClient->remotePort() << " => " << message << endl;
         };
 
-        newClient->onError = [newClient](string error) {
-            cout << "ERR on socket:" << newClient->remoteAddress() << " => " << error << endl;
-        };
-
         newClient->onSocketClosed = [newClient]() {
-            cout << "Socket closed:" << newClient->remoteAddress() << endl;
+            cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << endl;
         };
-    };
-
-    tcpServer.onError = [&](string error) {
-        cerr << error << endl;
     };
 
     // Bind the server to a port.
@@ -39,10 +30,10 @@ int main()
 
     // You should do an input loop so the program will not terminated immediately:
     string input;
-    cin >> input;
+    getline(cin, input);
     while (input != "exit")
     {
-        cin >> input;
+        getline(cin, input);
     }
 
     // Close the server before exiting the program.

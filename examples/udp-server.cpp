@@ -1,35 +1,33 @@
-#include "../easysocket/udpserver.h"
+#include <udpserver.h>
 #include <iostream>
 
 using namespace std;
 
 int main()
 {
-        // Initialize server socket..
-        UDPServer udpServer;
+    // Initialize server socket..
+    UDPServer udpServer;
 
-        udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
-            cout << ipv4 << ":" << port << " => " << message << endl;
+    // onMessageReceived will run when a message received with information of ip & port of sender:
+    udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
+        cout << ipv4 << ":" << port << " => " << message << endl;
 
-            udpServer.SendTo("I got your UDP message!", ipv4, port);
-        };
+        // Just send without control:
+        udpServer.SendTo("I got your message!", ipv4, port);
+    };
 
-        udpServer.onError = [&](string error) {
-            cerr << error << endl;
-        };
+    // Bind the server to a port.
+    udpServer.Bind(8888);
 
-        // Bind the server to a port.
-        udpServer.Bind(8888);
+    // You should do an input loop so the program will not terminated immediately:
+    string input;
+    getline(cin, input);
+    while (input != "exit")
+    {
+        getline(cin, input);
+    }
 
-        // You should do an input loop so the program will not terminated immediately:
-        string input;
-        cin >> input;
-        while (input != "exit")
-        {
-            cin >> input;
-        }
-
-        udpServer.Close();
+    udpServer.Close();
 
     return 0;
 }

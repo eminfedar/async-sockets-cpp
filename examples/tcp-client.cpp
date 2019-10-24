@@ -1,4 +1,4 @@
-#include "../easysocket/socket.h"
+#include <tcpsocket.h>
 #include <iostream>
 
 using namespace std;
@@ -6,7 +6,17 @@ using namespace std;
 int main()
 {
     // Initialize socket.
-    Socket tcpSocket;
+    TCPSocket tcpSocket;
+
+    // Start receiving from the host.
+    tcpSocket.onMessageReceived = [](string message) {
+        cout << "Message from the Server: " << message << endl;
+    };
+
+    // On socket closed:
+    tcpSocket.onSocketClosed = []{
+        cout << "Connection closed." << endl;
+    };
 
     // Connect to the host.
     tcpSocket.Connect("127.0.0.1", 8888, [&] {
@@ -16,29 +26,14 @@ int main()
         tcpSocket.Send("Hello Server!");
     });
 
-    // Start receiving from the host.
-    tcpSocket.onMessageReceived = [&](string message) {
-        cout << "Message from the Server: " << message << endl;
-    };
-
-    // On socket closed:
-    tcpSocket.onSocketClosed = [&]() {
-        cout << "Connection lost with the server!" << endl;
-    };
-
-    // Check if there is any error:
-    tcpSocket.onError = [&](string error) {
-        cerr << error << endl;
-    };
-
     // You should do an input loop so the program will not end immediately:
     // Because socket listenings are non-blocking.
     string input;
-    cin >> input;
+    getline(cin, input);
     while (input != "exit")
     {
         tcpSocket.Send(input);
-        cin >> input;
+        getline(cin, input);
     }
 
     tcpSocket.Close();
