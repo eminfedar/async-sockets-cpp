@@ -1,9 +1,6 @@
 #include <tcpsocket.h>
-#include <iostream>
-
 TCPSocket::TCPSocket(std::function<void(int, std::string)> onError, int socketId) : BaseSocket(onError, TCP, socketId)
 {
-
 }
 
 int TCPSocket::Send(std::string message)
@@ -11,12 +8,10 @@ int TCPSocket::Send(std::string message)
     return this->Send(message.c_str(), message.length());
 }
 
-int TCPSocket::Send(const char* bytes, size_t byteslength)
+int TCPSocket::Send(const char *bytes, size_t byteslength)
 {
     if (this->isClosed)
-    {
         return -1;
-    }
 
     int sent = 0;
     if ((sent = send(this->sock, bytes, byteslength, 0)) < 0)
@@ -26,7 +21,7 @@ int TCPSocket::Send(const char* bytes, size_t byteslength)
     return sent;
 }
 
-void TCPSocket::Connect( std::string ipv4, uint16_t port, std::function<void()> onConnected, std::function<void(int, std::string)> onError)
+void TCPSocket::Connect(std::string ipv4, uint16_t port, std::function<void()> onConnected, std::function<void(int, std::string)> onError)
 {
     if (inet_pton(AF_INET, ipv4.c_str(), &this->address.sin_addr) <= 0)
     {
@@ -38,8 +33,7 @@ void TCPSocket::Connect( std::string ipv4, uint16_t port, std::function<void()> 
     this->Connect((uint32_t)this->address.sin_addr.s_addr, port, onConnected, onError);
 }
 
-
-void TCPSocket::Connect( uint32_t IPv4, uint16_t port, std::function<void()> onConnected, std::function<void(int, std::string)> onError)
+void TCPSocket::Connect(uint32_t IPv4, uint16_t port, std::function<void()> onConnected, std::function<void(int, std::string)> onError)
 {
     this->address.sin_family = AF_INET;
     this->address.sin_port = htons(port);
@@ -75,25 +69,12 @@ void TCPSocket::Receive(TCPSocket *socket)
 {
     char tempBuffer[BUFFER_SIZE];
     int messageLength;
-    while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) >= 0)
+
+    while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
     {
-        if (messageLength > 0)
-        {
-            if (socket->onMessageReceived)
-                socket->onMessageReceived(std::string(tempBuffer).substr(0, messageLength));
-        }
-        else
-        {
-            socket->Close();
-            if (socket->onSocketClosed)
-                socket->onSocketClosed();
-        }
+        socket->onMessageReceived(std::string(tempBuffer).substr(0, messageLength));
     }
 
-    // If socket crashed:
-    if (!socket->isClosed)
-    {
-        std::cerr << "Socket closed with error." << std::endl;
-        perror("recv");
-    }
+    socket->Close();
+    socket->onSocketClosed();
 }

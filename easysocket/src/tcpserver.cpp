@@ -2,7 +2,9 @@
 
 TCPServer::TCPServer(std::function<void(int, std::string)> onError) : BaseSocket(onError, TCP)
 {
-
+    int opt = 1;
+    setsockopt(this->sock,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(int));
+    setsockopt(this->sock,SOL_SOCKET,SO_REUSEPORT,&opt,sizeof(int));
 }
 
 void TCPServer::Bind(int port, std::function<void(int, std::string)> onError)
@@ -10,7 +12,7 @@ void TCPServer::Bind(int port, std::function<void(int, std::string)> onError)
     this->Bind("0.0.0.0", port, onError);
 }
 
-void TCPServer::Bind(const char* address, uint16_t port, std::function<void(int, std::string)> onError)
+void TCPServer::Bind(const char *address, uint16_t port, std::function<void(int, std::string)> onError)
 {
     if (inet_pton(AF_INET, address, &this->address.sin_addr) <= 0)
     {
@@ -40,24 +42,36 @@ void TCPServer::Listen(std::function<void(int, std::string)> onError)
     acceptThread.detach();
 }
 
+void TCPServer::Close()
+{
+    shutdown(this->sock, SHUT_RDWR);
+    
+    BaseSocket::Close();
+}
+
 void TCPServer::Accept(TCPServer *server, std::function<void(int, std::string)> onError)
 {
     sockaddr_in newSocketInfo;
     socklen_t newSocketInfoLength = sizeof(newSocketInfo);
 
     int newSock;
-    while (true)
+    while (!server->isClosed)
     {
-        if ((newSock = accept(server->sock, (sockaddr *)&newSocketInfo, &newSocketInfoLength)) < 0)
+        while ((newSock = accept(server->sock, (sockaddr *)&newSocketInfo, &newSocketInfoLength)) < 0)
         {
+            if (errno == EBADF || errno == EINVAL) return;
+
             onError(errno, "Error while accepting a new connection.");
             return;
         }
 
-        TCPSocket *newSocket = new TCPSocket([](int e, std::string er){}, newSock);
-        newSocket->setAddressStruct(newSocketInfo);
+        if (!server->isClosed && newSock >= 0)
+        {
+            TCPSocket *newSocket = new TCPSocket([](int e, std::string er) { FDR_UNUSED(e); FDR_UNUSED(er); }, newSock);
+            newSocket->setAddressStruct(newSocketInfo);
 
-        server->onNewConnection(newSocket);
-        newSocket->Listen();
+            server->onNewConnection(newSocket);
+            newSocket->Listen();
+        }
     }
 }

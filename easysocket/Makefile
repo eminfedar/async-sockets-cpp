@@ -21,14 +21,14 @@ SRCEXT	:= .cpp
 OBJEXT	:= .o
 
 #Compiler and Linker
-BUILD  		?= debug
+BUILD  		?= release
 BITS		?= 64
 CC			:= g++
 
 #Flags, Libraries and Includes
 CFLAGS.common	:= -std=c++17 -fPIC -m$(BITS) -Wall -Wextra -DBUILD_EASYSOCKET
 CFLAGS.debug 	:= $(CFLAGS.common) -g
-CFLAGS.release	:= $(CFLAGS.common) -Werror
+CFLAGS.release	:= $(CFLAGS.common) -Werror -O3
 CFLAGS			?= $(CFLAGS.$(BUILD))
 LIB		:= -L$(TARGETDIR)
 INC		:= -I$(INCDIR)

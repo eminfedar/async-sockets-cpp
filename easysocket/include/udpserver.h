@@ -12,7 +12,7 @@ public:
     UDPServer();
 
     void Bind(int port, FDR_ON_ERROR);
-    void Bind(const char *address, std::uint16_t port, FDR_ON_ERROR);
+    void Bind(std::string IPv4, std::uint16_t port, FDR_ON_ERROR);
 };
 
 #endif

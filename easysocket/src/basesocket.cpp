@@ -21,8 +21,10 @@ BaseSocket::BaseSocket(std::function<void(int, std::string)> onError, SocketType
 
 void BaseSocket::Close()
 {
+    if(isClosed) return;
+
     isClosed = true;
-    close(this->sock);
+    close(this->sock);    
 }
 
 std::string BaseSocket::remoteAddress()

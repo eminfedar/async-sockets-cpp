@@ -8,7 +8,7 @@
 #include <functional>
 #include <thread>
 
-#define BUFFER_SIZE 0xFFFF
+constexpr uint16_t BUFFER_SIZE = 0xFFFF;
 
 class EASYSOCKET_API UDPSocket : public BaseSocket
 {

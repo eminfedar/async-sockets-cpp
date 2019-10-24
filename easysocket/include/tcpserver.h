@@ -12,7 +12,7 @@ class EASYSOCKET_API TCPServer : public BaseSocket
 {
 public:
     // Event Listeners:
-    std::function<void(TCPSocket *)> onNewConnection;
+    std::function<void(TCPSocket *)> onNewConnection = [](TCPSocket* sock){FDR_UNUSED(sock)};
 
     TCPServer(FDR_ON_ERROR);
 
@@ -22,6 +22,9 @@ public:
 
     // Start listening the server.
     void Listen(FDR_ON_ERROR);
+
+    // Overriding Close to add shutdown():
+    void Close();
 
 private:
     static void Accept(TCPServer *server, FDR_ON_ERROR);
