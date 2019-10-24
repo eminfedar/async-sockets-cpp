@@ -6,9 +6,7 @@ using namespace std;
 int main()
 {
     // Initialize socket.
-    TCPSocket tcpSocket([](int errorCode, std::string errorMessage) {
-        cerr << errorMessage << endl;
-    });
+    TCPSocket tcpSocket;
 
     // Start receiving from the host.
     tcpSocket.onMessageReceived = [](string message) {
@@ -26,20 +24,16 @@ int main()
 
         // Send String:
         tcpSocket.Send("Hello Server!");
-    },
-    // Handle connecting errors if you want.
-    [](int errorCode, std::string errorMessage) {
-        cerr << errorMessage << endl;
     });
 
     // You should do an input loop so the program will not end immediately:
     // Because socket listenings are non-blocking.
     string input;
-    cin >> input;
+    getline(cin, input);
     while (input != "exit")
     {
         tcpSocket.Send(input);
-        cin >> input;
+        getline(cin, input);
     }
 
     tcpSocket.Close();

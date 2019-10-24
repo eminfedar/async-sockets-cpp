@@ -18,26 +18,22 @@ int main()
         };
 
         newClient->onSocketClosed = [newClient]() {
-            cout << "Socket closed:" << newClient->remoteAddress() << endl;
+            cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << endl;
         };
     };
 
     // Bind the server to a port.
-    tcpServer.Bind(8888, [](int errorCode, std::string errorMessage){
-        cerr << errorMessage << endl;
-    });
+    tcpServer.Bind(8888);
 
     // Start Listening the server.
-    tcpServer.Listen([](int errorCode, std::string errorMessage){
-        cerr << errorMessage << endl;
-    });
+    tcpServer.Listen();
 
     // You should do an input loop so the program will not terminated immediately:
     string input;
-    cin >> input;
+    getline(cin, input);
     while (input != "exit")
     {
-        cin >> input;
+        getline(cin, input);
     }
 
     // Close the server before exiting the program.

@@ -5,34 +5,29 @@ using namespace std;
 
 int main()
 {
-        // Initialize server socket..
-        UDPServer udpServer;
+    // Initialize server socket..
+    UDPServer udpServer;
 
-        udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
-            cout << ipv4 << ":" << port << " => " << message << endl;
+    // onMessageReceived will run when a message received with information of ip & port of sender:
+    udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
+        cout << ipv4 << ":" << port << " => " << message << endl;
 
-            udpServer.SendTo("I got your UDP message!", ipv4, port,
-                // Error handling while sending:
-                [](int errorCode, std::string errorMessage){
-                    cerr << errorMessage << endl;
-                }
-            );
-        };
+        // Just send without control:
+        udpServer.SendTo("I got your message!", ipv4, port);
+    };
 
-        // Bind the server to a port.
-        udpServer.Bind(8888, [](int errorCode, std::string errorMessage){
-            cerr << errorMessage << endl;
-        });
+    // Bind the server to a port.
+    udpServer.Bind(8888);
 
-        // You should do an input loop so the program will not terminated immediately:
-        string input;
-        cin >> input;
-        while (input != "exit")
-        {
-            cin >> input;
-        }
+    // You should do an input loop so the program will not terminated immediately:
+    string input;
+    getline(cin, input);
+    while (input != "exit")
+    {
+        getline(cin, input);
+    }
 
-        udpServer.Close();
+    udpServer.Close();
 
     return 0;
 }
