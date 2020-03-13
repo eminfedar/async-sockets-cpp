@@ -1,6 +1,8 @@
 # Asynchronous Sockets for C++
 Simple, thread-based, non-blocking asynchronous Client-Server classes in C++ for TCP & UDP.
-> This library not optimized for using on production!
+
+**!! -- This library not optimized for using on production -- !!**
+
 ```cpp
 // Initialize a tcp socket.
 TCPSocket tcpSocket;
