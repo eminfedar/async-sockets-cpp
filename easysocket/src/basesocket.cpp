@@ -1,5 +1,7 @@
 #include <basesocket.h>
 
+#include <cerrno>
+
 std::string BaseSocket::ipToString(sockaddr_in addr)
 {
     char ip[INET_ADDRSTRLEN];
