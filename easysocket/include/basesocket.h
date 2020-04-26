@@ -3,7 +3,7 @@
 
 #include <DllHelper.h>
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -35,9 +35,9 @@ public:
     sockaddr_in address;
     bool isClosed = false;
 
-    BaseSocket(FDR_ON_ERROR, SocketType sockType = TCP, int socketId = -1);
+    explicit BaseSocket(FDR_ON_ERROR, SocketType sockType = TCP, int socketId = -1);
 
-    void Close();
+    virtual void Close();
 
     std::string remoteAddress();
     int remotePort();

@@ -33,3 +33,6 @@
 
 examples/bin
 .vscode
+.idea
+cmake-build-debug
+**/.DS_Store
