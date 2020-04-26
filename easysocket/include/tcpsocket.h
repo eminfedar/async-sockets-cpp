@@ -17,7 +17,7 @@ public:
     std::function<void(std::string)> onMessageReceived = [](std::string msg) { FDR_UNUSED(msg) };
     std::function<void()> onSocketClosed = [](){};
 
-    TCPSocket(FDR_ON_ERROR, int socketId = -1);
+    explicit TCPSocket(FDR_ON_ERROR, int socketId = -1);
 
     int Send(std::string message);
     int Send(const char *bytes, size_t byteslength);

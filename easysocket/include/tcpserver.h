@@ -14,7 +14,7 @@ public:
     // Event Listeners:
     std::function<void(TCPSocket *)> onNewConnection = [](TCPSocket* sock){FDR_UNUSED(sock)};
 
-    TCPServer(FDR_ON_ERROR);
+    explicit TCPServer(FDR_ON_ERROR);
 
     // Binding the server.
     void Bind(int port, FDR_ON_ERROR);
@@ -24,7 +24,7 @@ public:
     void Listen(FDR_ON_ERROR);
 
     // Overriding Close to add shutdown():
-    void Close();
+    void Close() override;
 
 private:
     static void Accept(TCPServer *server, FDR_ON_ERROR);
