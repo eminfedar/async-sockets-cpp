@@ -14,8 +14,9 @@ class EASYSOCKET_API TCPSocket : public BaseSocket
 {
 public:
     // Event Listeners:
-    std::function<void(std::string)> onMessageReceived = [](std::string msg) { FDR_UNUSED(msg) };
-    std::function<void()> onSocketClosed = [](){};
+    std::function<void(std::string)> onMessageReceived;
+    std::function<void(const char*, int)> onRawMessageReceived;
+    std::function<void()> onSocketClosed;
 
     explicit TCPSocket(FDR_ON_ERROR, int socketId = -1);
 

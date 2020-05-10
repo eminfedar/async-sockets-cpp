@@ -15,8 +15,17 @@ int main()
 
         newClient->onMessageReceived = [newClient](string message) {
             cout << newClient->remoteAddress() << ":" << newClient->remotePort() << " => " << message << endl;
+            newClient->Send("OK!");
         };
-
+        
+        // If you want to use raw bytes
+        /*
+        newClient->onRawMessageReceived = [newClient](const char* message, int length) {
+            cout << newClient->remoteAddress() << ":" << newClient->remotePort() << " => " << message << "(" << length << ")" << endl;
+            newClient->Send("OK!");
+        };
+        */
+        
         newClient->onSocketClosed = [newClient]() {
             cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << endl;
         };

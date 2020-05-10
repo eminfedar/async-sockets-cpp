@@ -48,8 +48,12 @@ void UDPSocket::Receive(UDPSocket *udpSocket)
         }
         else
         {
+            tempBuffer[messageLength] = '\0';
             if (udpSocket->onMessageReceived)
                 udpSocket->onMessageReceived(std::string(tempBuffer).substr(0, messageLength), ipToString(hostAddr), ntohs(hostAddr.sin_port));
+            
+            if (udpSocket->onRawMessageReceived)
+                udpSocket->onRawMessageReceived(tempBuffer, messageLength, ipToString(hostAddr), ntohs(hostAddr.sin_port));
         }
     }
 }

@@ -14,6 +14,7 @@ class EASYSOCKET_API UDPSocket : public BaseSocket
 {
 public:
     std::function<void(std::string, std::string, std::uint16_t)> onMessageReceived;
+    std::function<void(const char*, int, std::string, std::uint16_t)> onRawMessageReceived;
 
     explicit UDPSocket(FDR_ON_ERROR, int socketId = -1);
 

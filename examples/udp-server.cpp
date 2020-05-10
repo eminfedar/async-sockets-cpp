@@ -16,6 +16,16 @@ int main()
         udpServer.SendTo("I got your message!", ipv4, port);
     };
 
+    // If you want to use raw byte arrays:
+    /*
+    udpServer.onRawMessageReceived = [&](const char* message, int length, string ipv4, uint16_t port) {
+        cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << endl;
+
+        // Just send without control:
+        udpServer.SendTo("I got your message!", ipv4, port);
+    };
+    */
+
     // Bind the server to a port.
     udpServer.Bind(8888);
 

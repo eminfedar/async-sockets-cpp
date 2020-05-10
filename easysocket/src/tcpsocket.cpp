@@ -72,9 +72,15 @@ void TCPSocket::Receive(TCPSocket *socket)
 
     while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
     {
-        socket->onMessageReceived(std::string(tempBuffer).substr(0, messageLength));
+        tempBuffer[messageLength] = '\0';
+        if(socket->onMessageReceived)
+            socket->onMessageReceived(std::string(tempBuffer).substr(0, messageLength));
+        
+        if(socket->onRawMessageReceived)
+            socket->onRawMessageReceived(tempBuffer, messageLength);
     }
 
     socket->Close();
-    socket->onSocketClosed();
+    if(socket->onSocketClosed)
+        socket->onSocketClosed();
 }

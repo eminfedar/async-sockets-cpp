@@ -22,6 +22,13 @@ int main()
     udpSocket.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
         cout << ipv4 << ":" << port << " => " << message << endl;
     };
+    
+    // If you want to use raw byte arrays:
+    /*
+    udpSocket.onRawMessageReceived = [&](const char* message, int length, string ipv4, uint16_t port) {
+        cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << endl;
+    };
+    */
 
     // You should do an input loop so the program will not terminated immediately:
     string input;
