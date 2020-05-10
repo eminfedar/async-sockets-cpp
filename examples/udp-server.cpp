@@ -27,7 +27,10 @@ int main()
     */
 
     // Bind the server to a port.
-    udpServer.Bind(8888);
+    udpServer.Bind(8888, [](int errorCode, string errorMessage) {
+        // BINDING FAILED:
+        cout << errorCode << " : " << errorMessage << endl;
+    });
 
     // You should do an input loop so the program will not terminated immediately:
     string input;

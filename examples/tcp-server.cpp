@@ -32,10 +32,16 @@ int main()
     };
 
     // Bind the server to a port.
-    tcpServer.Bind(8888);
+    tcpServer.Bind(8888, [](int errorCode, string errorMessage) {
+        // BINDING FAILED:
+        cout << errorCode << " : " << errorMessage << endl;
+    });
 
     // Start Listening the server.
-    tcpServer.Listen();
+    tcpServer.Listen([](int errorCode, string errorMessage) {
+        // LISTENING FAILED:
+        cout << errorCode << " : " << errorMessage << endl;
+    });
 
     // You should do an input loop so the program will not terminated immediately:
     string input;

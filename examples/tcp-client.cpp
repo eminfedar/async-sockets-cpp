@@ -25,11 +25,15 @@ int main()
     };
 
     // Connect to the host.
-    tcpSocket.Connect("127.0.0.1", 8888, [&] {
+    tcpSocket.Connect("localhost", 8888, [&] {
         cout << "Connected to the server successfully." << endl;
 
         // Send String:
         tcpSocket.Send("Hello Server!");
+    },
+    [](int errorCode, std::string errorMessage){
+        // CONNECTION FAILED
+        cout << errorCode << " : " << errorMessage << endl;
     });
 
     // You should do an input loop so the program will not end immediately:

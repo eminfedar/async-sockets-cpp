@@ -1,4 +1,5 @@
 #include <udpsocket.h>
+#include <string.h>
 
 UDPSocket::UDPSocket(std::function<void(int, std::string)> onError, int socketId) : BaseSocket(onError, UDP, socketId)
 {
@@ -6,20 +7,35 @@ UDPSocket::UDPSocket(std::function<void(int, std::string)> onError, int socketId
     receivingThread.detach();
 }
 
-void UDPSocket::SendTo(std::string message, std::string ipv4, uint16_t port, std::function<void(int, std::string)> onError)
+void UDPSocket::SendTo(std::string message, std::string host, uint16_t port, std::function<void(int, std::string)> onError)
 {
-    this->SendTo(message.c_str(), message.length(), ipv4, port, onError);
+    this->SendTo(message.c_str(), message.length(), host, port, onError);
 }
 
-void UDPSocket::SendTo(const char *bytes, size_t byteslength, std::string ipv4, uint16_t port, std::function<void(int, std::string)> onError)
+void UDPSocket::SendTo(const char *bytes, size_t byteslength, std::string host, uint16_t port, std::function<void(int, std::string)> onError)
 {
     sockaddr_in hostAddr;
 
-    if (inet_pton(AF_INET, ipv4.c_str(), &hostAddr.sin_addr) <= 0)
-    {
-        onError(errno, "Invalid IP address.");
+    struct addrinfo hints, *res, *it;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+
+    int status;
+    if ((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0) {
+        onError(errno, "Invalid address." + std::string(gai_strerror(status)));
         return;
     }
+
+    for(it = res; it != NULL; it = it->ai_next)
+    {
+        if (it->ai_family == AF_INET) { // IPv4
+            memcpy((void*)(&hostAddr), (void*)it->ai_addr, sizeof(sockaddr_in));
+            break; // for now, just get first ip (ipv4).
+        }
+    }
+
+    freeaddrinfo(res);
 
     hostAddr.sin_port = htons(port);
     hostAddr.sin_family = AF_INET;

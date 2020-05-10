@@ -18,8 +18,8 @@ public:
 
     explicit UDPSocket(FDR_ON_ERROR, int socketId = -1);
 
-    void SendTo(std::string message, std::string ipv4, uint16_t port, FDR_ON_ERROR);
-    void SendTo(const char *bytes, size_t byteslength, std::string ipv4, uint16_t port, FDR_ON_ERROR);
+    void SendTo(std::string message, std::string host, uint16_t port, FDR_ON_ERROR);
+    void SendTo(const char *bytes, size_t byteslength, std::string host, uint16_t port, FDR_ON_ERROR);
 
 private:
     static void Receive(UDPSocket *udpSocket);

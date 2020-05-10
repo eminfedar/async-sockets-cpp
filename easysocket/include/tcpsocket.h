@@ -23,8 +23,8 @@ public:
     int Send(std::string message);
     int Send(const char *bytes, size_t byteslength);
 
-    void Connect(std::string ipv4, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR);
-    void Connect(uint32_t IPv4, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR);
+    void Connect(std::string host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR);
+    void Connect(uint32_t ipv4, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR);
 
     void Listen();
 

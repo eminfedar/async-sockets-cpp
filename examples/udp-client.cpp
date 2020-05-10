@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     // Our constants:
-    const string IP = "127.0.0.1";
+    const string IP = "localhost";
     const uint16_t PORT = 8888;
 
     // Initialize socket.
