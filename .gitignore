@@ -32,6 +32,7 @@
 *.app
 
 examples/bin
+benchmarks/easysocket/bin
 .vscode
 .idea
 cmake-build-debug
