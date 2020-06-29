@@ -1,9 +1,9 @@
 #ifndef FDR_TCPSERVER_H
 #define FDR_TCPSERVER_H
 
-#include <DllHelper.h>
+#include "DllHelper.h"
 
-#include <tcpsocket.h>
+#include "tcpsocket.h"
 #include <string>
 #include <functional>
 #include <thread>

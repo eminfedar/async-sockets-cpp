@@ -1,14 +1,12 @@
 #ifndef FDR_TCPSOCKET_H
 #define FDR_TCPSOCKET_H
 
-#include <DllHelper.h>
+#include "DllHelper.h"
 
-#include <basesocket.h>
+#include "basesocket.h"
 #include <string>
 #include <functional>
 #include <thread>
-
-constexpr uint16_t BUFFER_SIZE = 0xFFFF;
 
 class EASYSOCKET_API TCPSocket : public BaseSocket
 {

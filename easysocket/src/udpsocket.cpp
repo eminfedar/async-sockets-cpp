@@ -117,12 +117,12 @@ void UDPSocket::Connect(uint32_t ipv4, uint16_t port, std::function<void(int, st
 
 void UDPSocket::Receive(UDPSocket *udpSocket)
 {
-    char tempBuffer[BUFFER_SIZE];
+    char tempBuffer[udpSocket->BUFFER_SIZE];
 
     while (true)
     {
         int messageLength;
-        messageLength = recv(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0);
+        messageLength = recv(udpSocket->sock, tempBuffer, udpSocket->BUFFER_SIZE, 0);
 
         if (messageLength < 0)
         {
@@ -146,12 +146,12 @@ void UDPSocket::ReceiveFrom(UDPSocket *udpSocket)
     sockaddr_in hostAddr;
     socklen_t hostAddrSize = sizeof(hostAddr);
 
-    char tempBuffer[BUFFER_SIZE];
+    char tempBuffer[udpSocket->BUFFER_SIZE];
 
     while (true)
     {
         int messageLength;
-        messageLength = recvfrom(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0, (sockaddr *)&hostAddr, &hostAddrSize);
+        messageLength = recvfrom(udpSocket->sock, tempBuffer, udpSocket->BUFFER_SIZE, 0, (sockaddr *)&hostAddr, &hostAddrSize);
 
         if (messageLength < 0)
         {

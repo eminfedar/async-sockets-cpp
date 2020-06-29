@@ -82,10 +82,10 @@ void TCPSocket::setAddressStruct(sockaddr_in addr)
 
 void TCPSocket::Receive(TCPSocket *socket)
 {
-    char tempBuffer[BUFFER_SIZE];
+    char tempBuffer[socket->BUFFER_SIZE];
     int messageLength;
 
-    while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
+    while ((messageLength = recv(socket->sock, tempBuffer, socket->BUFFER_SIZE, 0)) > 0)
     {
         tempBuffer[messageLength] = '\0';
         if(socket->onMessageReceived)

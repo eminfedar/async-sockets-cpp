@@ -1,7 +1,7 @@
 #ifndef FDR_BASESOCKET_H
 #define FDR_BASESOCKET_H
 
-#include <DllHelper.h>
+#include "DllHelper.h"
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <arpa/inet.h>
@@ -27,6 +27,7 @@ protected:
     static std::string ipToString(sockaddr_in addr);
 
 public:
+    const uint16_t BUFFER_SIZE = 0xFFFF;
     enum EASYSOCKET_API SocketType
     {
         TCP = SOCK_STREAM,
@@ -42,6 +43,7 @@ public:
 
     std::string remoteAddress();
     int remotePort();
+    int fileDescriptor() const { return this->sock; }
 };
 
 #endif

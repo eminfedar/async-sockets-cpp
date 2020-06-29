@@ -1,9 +1,9 @@
 #ifndef FDR_UDPSERVER_H
 #define FDR_UDPSERVER_H
 
-#include <DllHelper.h>
+#include "DllHelper.h"
 
-#include <udpsocket.h>
+#include "udpsocket.h"
 #include <string>
 
 class EASYSOCKET_API UDPServer : public UDPSocket
