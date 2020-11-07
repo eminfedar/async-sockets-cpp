@@ -2,6 +2,9 @@
 
 TCPServer::TCPServer(std::function<void(int, std::string)> onError) : BaseSocket(onError, TCP)
 {
+    int opt = 1;
+    setsockopt(this->sock,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(int));
+    setsockopt(this->sock,SOL_SOCKET,SO_REUSEPORT,&opt,sizeof(int));
 }
 
 void TCPServer::Bind(int port, std::function<void(int, std::string)> onError)
