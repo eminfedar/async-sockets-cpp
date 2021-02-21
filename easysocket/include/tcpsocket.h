@@ -27,9 +27,15 @@ public:
     void Listen();
 
     void setAddressStruct(sockaddr_in addr);
+    sockaddr_in getAddressStruct() const;
+    
+    void setTimeout(int seconds);
+    int getTimeout() const;
 
 private:
     static void Receive(TCPSocket *socket);
+
+    int timeout = 5; // 5 seconds timeout default.
 };
 
 #endif

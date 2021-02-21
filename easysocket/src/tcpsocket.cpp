@@ -2,6 +2,7 @@
 #include <string.h>
 TCPSocket::TCPSocket(std::function<void(int, std::string)> onError, int socketId) : BaseSocket(onError, TCP, socketId)
 {
+    this->setTimeout(this->timeout);
 }
 
 int TCPSocket::Send(std::string message)
@@ -78,6 +79,23 @@ void TCPSocket::Listen()
 void TCPSocket::setAddressStruct(sockaddr_in addr)
 {
     this->address = addr;
+}
+sockaddr_in TCPSocket::getAddressStruct() const
+{
+    return this->address;
+}
+
+void TCPSocket::setTimeout(int seconds) {
+    this->timeout = seconds;
+    struct timeval tv;      
+    tv.tv_sec = seconds;
+    tv.tv_usec = 0;
+
+    setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
+    setsockopt(this->sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
+}
+int TCPSocket::getTimeout() const{
+    return this->timeout;
 }
 
 void TCPSocket::Receive(TCPSocket *socket)

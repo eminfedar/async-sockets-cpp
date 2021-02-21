@@ -7,6 +7,9 @@ int main()
 {
     // Initialize socket.
     TCPSocket tcpSocket;
+    
+    // Set connection timeout seconds.
+    tcpSocket.setTimeout(5);
 
     // Start receiving from the host.
     tcpSocket.onMessageReceived = [](string message) {
@@ -25,7 +28,7 @@ int main()
     };
 
     // Connect to the host.
-    tcpSocket.Connect("localhost", 8888, [&] {
+    tcpSocket.Connect("54.23.12.43", 8888, [&] {
         cout << "Connected to the server successfully." << endl;
 
         // Send String:
