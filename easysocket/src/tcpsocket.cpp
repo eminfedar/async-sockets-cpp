@@ -1,8 +1,8 @@
 #include <tcpsocket.h>
 #include <string.h>
+
 TCPSocket::TCPSocket(std::function<void(int, std::string)> onError, int socketId) : BaseSocket(onError, TCP, socketId)
 {
-    this->setTimeout(this->timeout);
 }
 
 int TCPSocket::Send(std::string message)
@@ -55,12 +55,16 @@ void TCPSocket::Connect(uint32_t ipv4, uint16_t port, std::function<void()> onCo
     this->address.sin_port = htons(port);
     this->address.sin_addr.s_addr = ipv4;
 
+    this->setTimeout(5);
+
     // Try to connect.
     if (connect(this->sock, (const sockaddr *)&this->address, sizeof(sockaddr_in)) < 0)
     {
         onError(errno, "Connection failed to the host.");
         return;
     }
+
+    this->setTimeout(0);
 
     // Connected to the server, fire the event.
     onConnected();
@@ -86,16 +90,12 @@ sockaddr_in TCPSocket::getAddressStruct() const
 }
 
 void TCPSocket::setTimeout(int seconds) {
-    this->timeout = seconds;
     struct timeval tv;      
     tv.tv_sec = seconds;
     tv.tv_usec = 0;
 
     setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
     setsockopt(this->sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
-}
-int TCPSocket::getTimeout() const{
-    return this->timeout;
 }
 
 void TCPSocket::Receive(TCPSocket *socket)
@@ -115,5 +115,5 @@ void TCPSocket::Receive(TCPSocket *socket)
 
     socket->Close();
     if(socket->onSocketClosed)
-        socket->onSocketClosed();
+        socket->onSocketClosed(errno);
 }

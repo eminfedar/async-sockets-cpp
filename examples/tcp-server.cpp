@@ -26,8 +26,8 @@ int main()
         };
         */
         
-        newClient->onSocketClosed = [newClient]() {
-            cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << endl;
+        newClient->onSocketClosed = [newClient](int errorCode) {
+            cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << " -> " << errorCode << endl;
         };
     };
 
