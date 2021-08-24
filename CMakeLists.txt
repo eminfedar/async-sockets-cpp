@@ -3,6 +3,9 @@ project(async_sockets_cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(THREADS_PREFER_PTHREAD_FLAG True)
+find_package(Threads REQUIRED)
+
 add_library(async_sockets STATIC easysocket/include/basesocket.h
         easysocket/include/DllHelper.h
         easysocket/include/tcpserver.h
@@ -15,6 +18,7 @@ add_library(async_sockets STATIC easysocket/include/basesocket.h
         easysocket/src/udpserver.cpp
         easysocket/src/udpsocket.cpp)
 target_include_directories(async_sockets PUBLIC easysocket/include)
+target_link_libraries(async_sockets PUBLIC Threads::Threads)
 
 add_executable(tcp-client examples/tcp-client.cpp)
 add_executable(tcp-server examples/tcp-server.cpp)
