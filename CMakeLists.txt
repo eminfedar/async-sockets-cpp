@@ -16,7 +16,7 @@ add_library(async_sockets STATIC easysocket/include/basesocket.h
         easysocket/src/udpserver.cpp
         easysocket/src/udpsocket.cpp)
 target_include_directories(async_sockets PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/easysocket/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/easysocket/include>
         $<INSTALL_INTERFACE:easysocket/include>
         )
 
