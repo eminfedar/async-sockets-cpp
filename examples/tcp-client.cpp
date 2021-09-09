@@ -1,4 +1,4 @@
-#include <tcpsocket.h>
+#include "../async-sockets/include/tcpsocket.hpp"
 #include <iostream>
 
 using namespace std;
@@ -6,7 +6,9 @@ using namespace std;
 int main()
 {
     // Initialize socket.
-    TCPSocket tcpSocket;
+    TCPSocket tcpSocket([](int errorCode, std::string errorMessage){
+        cout << "Socket creation error:" << errorCode << " : " << errorMessage << endl;
+    });
 
     // Start receiving from the host.
     tcpSocket.onMessageReceived = [](string message) {

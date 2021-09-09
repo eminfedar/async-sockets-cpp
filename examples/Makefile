@@ -1,48 +1,25 @@
-#!make
-# This make needs:
-# g++
-#
-
-include ../MakeHelper
-
-#The Directories, Source, Includes, Objects, Binary and Resources
-BUILDDIR	?= $(CURDIR)/obj/$(BUILD)
-TARGETDIR	?= $(CURDIR)/bin/$(BUILD)
-
-#Compiler and Linker
-BUILD	?= release
-BITS	?= 64
 CC		:= g++
+CFLAGS	:= --std=c++11
+LIBS	:= -lpthread
+INC		:= -I../async-sockets/include
+RM		:= rm
 
-#Flags, Libraries and Includes
-CFLAGS.common	:= -std=c++17 -m$(BITS) -Wall -Wextra
-CFLAGS.debug 	:= $(CFLAGS.common) -g
-CFLAGS.release	:= $(CFLAGS.common) -Werror -O3
-CFLAGS			?= $(CFLAGS.$(BUILD))
-LIB		:= -L$(TARGETDIR) -leasysocket -lpthread -Wl,-rpath='$${ORIGIN}'
-INC		:= -I$(CURDIR)/../easysocket/include
+all: tcp-client tcp-server udp-client udp-server
 
-build:
-	(cd ../easysocket && make TARGETDIR="$(TARGETDIR)")
-	$(CC) $(CFLAGS) $(INC) tcp-client.cpp -o $(TARGETDIR)/$(call MakeExe,tcp-client) $(LIB)
-	$(CC) $(CFLAGS) $(INC) udp-client.cpp -o $(TARGETDIR)/$(call MakeExe,udp-client) $(LIB)
-	$(CC) $(CFLAGS) $(INC) tcp-server.cpp -o $(TARGETDIR)/$(call MakeExe,tcp-server) $(LIB)
-	$(CC) $(CFLAGS) $(INC) udp-server.cpp -o $(TARGETDIR)/$(call MakeExe,udp-server) $(LIB)
+tcp-client:
+	$(CC) $(CFLAGS) tcp-client.cpp $(INC) $(LIBS) -o tcp-client
 
-template:
-	$(call MD,$(TARGETDIR))
-	$(call MD,$(BUILDDIR))
+tcp-server:
+	$(CC) $(CFLAGS) tcp-server.cpp $(INC) $(LIBS) -o tcp-server
+
+udp-client:
+	$(CC) $(CFLAGS) udp-client.cpp $(INC) $(LIBS) -o udp-client
+
+udp-server:
+	$(CC) $(CFLAGS) udp-server.cpp $(INC) $(LIBS) -o udp-server
 
 clean:
-	$(call RM,$(BUILDDIR))
-
-cleaner: clean
-	$(call RM,$(TARGETDIR))
-
-clean-deps: clean
-	(cd ../easysocket && make clean)
-
-cleaner-deps: cleaner
-	(cd ../easysocket && make cleaner)
-
-.PHONY: build template clean cleaner clean-deps cleaner-deps
+	$(RM) tcp-client
+	$(RM) tcp-server
+	$(RM) udp-client
+	$(RM) udp-server

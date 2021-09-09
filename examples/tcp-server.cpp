@@ -1,4 +1,4 @@
-#include <tcpserver.h>
+#include "../async-sockets/include/tcpserver.hpp"
 #include <iostream>
 
 using namespace std;
@@ -28,6 +28,7 @@ int main()
         
         newClient->onSocketClosed = [newClient](int errorCode) {
             cout << "Socket closed:" << newClient->remoteAddress() << ":" << newClient->remotePort() << " -> " << errorCode << endl;
+            cout << flush;
         };
     };
 
