@@ -110,6 +110,9 @@ private:
         socket->Close();
         if(socket->onSocketClosed)
             socket->onSocketClosed(errno);
+        
+        if (socket != nullptr)
+            delete socket;
     }
 
     void setTimeout(int seconds)
