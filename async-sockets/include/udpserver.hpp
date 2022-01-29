@@ -23,8 +23,19 @@ public:
             return;
         }
     }
+    
     void Bind(int port, FDR_ON_ERROR)
     {
         this->Bind("0.0.0.0", port, onError);
+    }
+
+    void setBroadcast(FDR_ON_ERROR)
+    {
+        int broadcast = 1;
+        if (setsockopt(this->sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof broadcast))
+        {
+            onError(errno, "setsockopt(SO_BROADCAST) failed.");
+            return;
+        }
     }
 };
