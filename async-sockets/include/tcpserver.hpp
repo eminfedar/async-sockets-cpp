@@ -77,6 +77,7 @@ private:
             if (!server->isClosed && newSock >= 0)
             {
                 TCPSocket *newSocket = new TCPSocket(onError, newSock);
+                newSocket->deleteAfterClosed = true;
                 newSocket->setAddressStruct(newSocketInfo);
 
                 server->onNewConnection(newSocket);

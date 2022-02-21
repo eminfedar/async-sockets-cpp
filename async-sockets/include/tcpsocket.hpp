@@ -91,6 +91,8 @@ public:
     void setAddressStruct(sockaddr_in addr) {this->address = addr;}
     sockaddr_in getAddressStruct() const {return this->address;}
 
+    bool deleteAfterClosed = false;
+
 private:
     static void Receive(TCPSocket *socket)
     {
@@ -111,7 +113,7 @@ private:
         if(socket->onSocketClosed)
             socket->onSocketClosed(errno);
         
-        if (socket != nullptr)
+        if (socket->deleteAfterClosed && socket != nullptr)
             delete socket;
     }
 
