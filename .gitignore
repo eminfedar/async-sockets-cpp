@@ -31,8 +31,10 @@
 *.out
 *.app
 
-examples/bin
-benchmarks/easysocket/bin
+examples/tcp-client
+examples/tcp-server
+examples/udp-client
+examples/udp-server
 .vscode
 .idea
 cmake-build-debug

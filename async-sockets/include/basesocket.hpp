@@ -13,6 +13,7 @@
 #include <string>
 #include <functional>
 #include <cerrno>
+#include <atomic>
 
 #define FDR_UNUSED(expr){ (void)(expr); } 
 #define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage)}
@@ -26,9 +27,9 @@ public:
         TCP = SOCK_STREAM,
         UDP = SOCK_DGRAM
     };
-    const uint16_t BUFFER_SIZE = 0xFFFF;
     sockaddr_in address;
-    bool isClosed = false;
+    std::atomic<bool> isClosed{false};
+    constexpr static uint16_t BUFFER_SIZE = 0x1000; // 4096 bytes
 
 protected:
     int sock = 0;

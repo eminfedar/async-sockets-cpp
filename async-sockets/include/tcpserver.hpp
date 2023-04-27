@@ -7,7 +7,7 @@ class TCPServer : public BaseSocket
 {
 public:
     // Event Listeners:
-    std::function<void(TCPSocket *)> onNewConnection = [](TCPSocket* sock){FDR_UNUSED(sock)};
+    std::function<void(TCPSocket*)> onNewConnection = [](TCPSocket* sock){FDR_UNUSED(sock)};
 
     explicit TCPServer(FDR_ON_ERROR): BaseSocket(onError, SocketType::TCP)
     {
@@ -17,7 +17,7 @@ public:
     }
 
     // Binding the server.
-    void Bind(const char *address, uint16_t port, FDR_ON_ERROR)
+    void Bind(const char* address, uint16_t port, FDR_ON_ERROR)
     {
         if (inet_pton(AF_INET, address, &this->address.sin_addr) <= 0)
         {
@@ -28,7 +28,7 @@ public:
         this->address.sin_family = AF_INET;
         this->address.sin_port = htons(port);
 
-        if (bind(this->sock, (const sockaddr *)&this->address, sizeof(this->address)) < 0)
+        if (bind(this->sock, (const sockaddr*)&this->address, sizeof(this->address)) < 0)
         {
             onError(errno, "Cannot bind the socket.");
             return;
@@ -58,15 +58,15 @@ public:
     }
 
 private:
-    static void Accept(TCPServer *server, FDR_ON_ERROR)
+    static void Accept(TCPServer* server, FDR_ON_ERROR)
     {
         sockaddr_in newSocketInfo;
         socklen_t newSocketInfoLength = sizeof(newSocketInfo);
 
-        int newSock;
+        int newSock = -1;
         while (!server->isClosed)
         {
-            while ((newSock = accept(server->sock, (sockaddr *)&newSocketInfo, &newSocketInfoLength)) < 0)
+            if ((newSock = accept(server->sock, (sockaddr*)&newSocketInfo, &newSocketInfoLength)) < 0)
             {
                 if (errno == EBADF || errno == EINVAL) return;
 
@@ -76,7 +76,7 @@ private:
 
             if (!server->isClosed && newSock >= 0)
             {
-                TCPSocket *newSocket = new TCPSocket(onError, newSock);
+                TCPSocket* newSocket = new TCPSocket(onError, newSock);
                 newSocket->deleteAfterClosed = true;
                 newSocket->setAddressStruct(newSocketInfo);
 

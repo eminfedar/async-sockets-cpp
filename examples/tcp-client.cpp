@@ -38,8 +38,7 @@ int main()
         cout << errorCode << " : " << errorMessage << endl;
     });
 
-    // You should do an input loop so the program will not end immediately:
-    // Because socket listenings are non-blocking.
+    // You should do an input loop, so the program won't terminate immediately
     string input;
     getline(cin, input);
     while (input != "exit")

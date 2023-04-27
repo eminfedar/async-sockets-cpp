@@ -26,7 +26,7 @@ public:
     }
     
     // SendTo with no connection
-    void SendTo(const char *bytes, size_t byteslength, std::string host, uint16_t port, FDR_ON_ERROR)
+    void SendTo(const char* bytes, size_t byteslength, const char* host, uint16_t port, FDR_ON_ERROR)
     {
         sockaddr_in hostAddr;
 
@@ -36,7 +36,7 @@ public:
         hints.ai_socktype = SOCK_DGRAM;
 
         int status;
-        if ((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0)
+        if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0)
         {
             onError(errno, "Invalid address." + std::string(gai_strerror(status)));
             return;
@@ -46,7 +46,7 @@ public:
         {
             if (it->ai_family == AF_INET)
             { // IPv4
-                memcpy((void *)(&hostAddr), (void *)it->ai_addr, sizeof(sockaddr_in));
+                memcpy((void* )(&hostAddr), (void* )it->ai_addr, sizeof(sockaddr_in));
                 break; // for now, just get first ip (ipv4).
             }
         }
@@ -56,19 +56,27 @@ public:
         hostAddr.sin_port = htons(port);
         hostAddr.sin_family = AF_INET;
 
-        if (sendto(this->sock, bytes, byteslength, 0, (sockaddr *)&hostAddr, sizeof(hostAddr)) < 0)
+        if (sendto(this->sock, bytes, byteslength, 0, (sockaddr*)&hostAddr, sizeof(hostAddr)) < 0)
         {
             onError(errno, "Cannot send message to the address.");
             return;
         }
     }
-    void SendTo(std::string message, std::string host, uint16_t port, FDR_ON_ERROR)
+    void SendTo(const char* bytes, size_t byteslength, const std::string& host, uint16_t port, FDR_ON_ERROR)
+    {
+        this->SendTo(bytes, byteslength, host.c_str(), port, onError);
+    }
+    void SendTo(const std::string& message, const char* host, uint16_t port, FDR_ON_ERROR)
     {
         this->SendTo(message.c_str(), message.length(), host, port, onError);
     }
+    void SendTo(const std::string& message, const std::string& host, uint16_t port, FDR_ON_ERROR)
+    {
+        this->SendTo(message.c_str(), message.length(), host.c_str(), port, onError);
+    }
 
     // Send with Connect()
-    int Send(const char *bytes, size_t byteslength)
+    int Send(const char* bytes, size_t byteslength)
     {
         if (this->isClosed)
         return -1;
@@ -80,7 +88,7 @@ public:
         }
         return sent;
     }
-    int Send(std::string message)
+    int Send(const std::string& message)
     {
         return this->Send(message.c_str(), message.length());
     }
@@ -93,13 +101,13 @@ public:
         this->address.sin_addr.s_addr = ipv4;
 
         // Try to connect.
-        if (connect(this->sock, (const sockaddr *)&this->address, sizeof(sockaddr_in)) < 0)
+        if (connect(this->sock, (const sockaddr* )&this->address, sizeof(sockaddr_in)) < 0)
         {
             onError(errno, "Connection failed to the host.");
             return;
         }
     }
-    void Connect(std::string host, uint16_t port, FDR_ON_ERROR)
+    void Connect(const char* host, uint16_t port, FDR_ON_ERROR)
     {
         struct addrinfo hints, *res, *it;
         memset(&hints, 0, sizeof(hints));
@@ -107,7 +115,7 @@ public:
         hints.ai_socktype = SOCK_DGRAM;
 
         int status;
-        if ((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0)
+        if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0)
         {
             onError(errno, "Invalid address." + std::string(gai_strerror(status)));
             return;
@@ -117,7 +125,7 @@ public:
         {
             if (it->ai_family == AF_INET)
             { // IPv4
-                memcpy((void *)(&this->address), (void *)it->ai_addr, sizeof(sockaddr_in));
+                memcpy((void* )(&this->address), (void*)it->ai_addr, sizeof(sockaddr_in));
                 break; // for now, just get first ip (ipv4).
             }
         }
@@ -128,14 +136,14 @@ public:
     }
 
 private:
-    static void Receive(UDPSocket *udpSocket)
+    static void Receive(UDPSocket* udpSocket)
     {
-        char tempBuffer[udpSocket->BUFFER_SIZE];
+        char tempBuffer[UDPSocket::BUFFER_SIZE];
 
         while (true)
         {
             int messageLength;
-            messageLength = recv(udpSocket->sock, tempBuffer, udpSocket->BUFFER_SIZE, 0);
+            messageLength = recv(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0);
 
             if (messageLength < 0)
             {
@@ -153,17 +161,17 @@ private:
             }
         }
     }
-    static void ReceiveFrom(UDPSocket *udpSocket)
+    static void ReceiveFrom(UDPSocket* udpSocket)
     {
         sockaddr_in hostAddr;
         socklen_t hostAddrSize = sizeof(hostAddr);
 
-        char tempBuffer[udpSocket->BUFFER_SIZE];
+        char tempBuffer[UDPSocket::BUFFER_SIZE];
 
         while (true)
         {
             int messageLength;
-            messageLength = recvfrom(udpSocket->sock, tempBuffer, udpSocket->BUFFER_SIZE, 0, (sockaddr *)&hostAddr, &hostAddrSize);
+            messageLength = recvfrom(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize);
 
             if (messageLength < 0)
             {

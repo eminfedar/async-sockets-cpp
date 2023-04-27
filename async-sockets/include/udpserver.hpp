@@ -6,9 +6,9 @@
 class UDPServer : public UDPSocket
 {
 public:
-    void Bind(std::string IPv4, std::uint16_t port, FDR_ON_ERROR)
+    void Bind(const char* IPv4, std::uint16_t port, FDR_ON_ERROR)
     {
-        if (inet_pton(AF_INET, IPv4.c_str(), &this->address.sin_addr) <= 0)
+        if (inet_pton(AF_INET, IPv4, &this->address.sin_addr) <= 0)
         {
             onError(errno, "Invalid address. Address type not supported.");
             return;
@@ -17,7 +17,7 @@ public:
         this->address.sin_family = AF_INET;
         this->address.sin_port = htons(port);
 
-        if (bind(this->sock, (const sockaddr *)&this->address, sizeof(this->address)) < 0)
+        if (bind(this->sock, (const sockaddr*)&this->address, sizeof(this->address)) < 0)
         {
             onError(errno, "Cannot bind the socket.");
             return;

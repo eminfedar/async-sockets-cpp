@@ -6,8 +6,8 @@ using namespace std;
 int main()
 {
     // Our constants:
-    const string IP = "localhost";
-    const uint16_t PORT = 8888;
+    constexpr const char* IP = "localhost";
+    constexpr uint16_t PORT = 8888;
 
     // Initialize socket.
     UDPSocket udpSocket(true); // "true" to use Connection on UDP. Default is "false".
@@ -28,7 +28,7 @@ int main()
     };
     */
 
-    // You should do an input loop so the program will not terminated immediately:
+    // You should do an input loop, so the program won't terminate immediately
     string input;
     getline(cin, input);
     while (input != "exit")

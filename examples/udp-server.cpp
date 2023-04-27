@@ -12,16 +12,15 @@ int main()
     /*udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {
         //cout << ipv4 << ":" << port << " => " << message << endl;
 
-        // Just send without control:
+        // Echo to client:
         udpServer.SendTo("A!", ipv4, port);
     };*/
 
     // If you want to use raw byte arrays:
-    
     udpServer.onRawMessageReceived = [&](const char* message, int length, string ipv4, uint16_t port) {
-        //cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << endl;
+        cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << endl;
 
-        // Just send without control:
+        // Echo to client:
         udpServer.SendTo(message, length, ipv4, port);
     };
     
@@ -32,7 +31,7 @@ int main()
         cout << errorCode << " : " << errorMessage << endl;
     });
 
-    // You should do an input loop so the program will not terminated immediately:
+    // You should do an input loop, so the program won't terminate immediately
     string input;
     getline(cin, input);
     while (input != "exit")

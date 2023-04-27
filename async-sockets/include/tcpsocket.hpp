@@ -17,7 +17,7 @@ public:
     explicit TCPSocket(FDR_ON_ERROR, int socketId = -1) : BaseSocket(onError, TCP, socketId){}
 
     // Send TCP Packages
-    int Send(const char *bytes, size_t byteslength)
+    int Send(const char* bytes, size_t byteslength)
     {
         if (this->isClosed)
             return -1;
@@ -29,9 +29,9 @@ public:
         }
         return sent;
     }
-    int Send(std::string message) { return this->Send(message.c_str(), message.length()); }
+    int Send(const std::string& message) { return this->Send(message.c_str(), message.length()); }
 
-    void Connect(std::string host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
+    void Connect(const char* host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
         struct addrinfo hints, *res, *it;
         memset(&hints, 0, sizeof(hints));
@@ -40,7 +40,7 @@ public:
 
         // Get address info from DNS
         int status;
-        if ((status = getaddrinfo(host.c_str(), NULL, &hints, &res)) != 0) {
+        if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
             onError(errno, "Invalid address." + std::string(gai_strerror(status)));
             return;
         }
@@ -66,7 +66,7 @@ public:
         this->setTimeout(5);
 
         // Try to connect.
-        if (connect(this->sock, (const sockaddr *)&this->address, sizeof(sockaddr_in)) < 0)
+        if (connect(this->sock, (const sockaddr*)&this->address, sizeof(sockaddr_in)) < 0)
         {
             onError(errno, "Connection failed to the host.");
             this->setTimeout(0);
@@ -94,12 +94,12 @@ public:
     bool deleteAfterClosed = false;
 
 private:
-    static void Receive(TCPSocket *socket)
+    static void Receive(TCPSocket* socket)
     {
-        char tempBuffer[socket->BUFFER_SIZE];
+        char tempBuffer[TCPSocket::BUFFER_SIZE];
         int messageLength;
 
-        while ((messageLength = recv(socket->sock, tempBuffer, socket->BUFFER_SIZE, 0)) > 0)
+        while ((messageLength = recv(socket->sock, tempBuffer, TCPSocket::BUFFER_SIZE, 0)) > 0)
         {
             tempBuffer[messageLength] = '\0';
             if(socket->onMessageReceived)
@@ -123,7 +123,7 @@ private:
         tv.tv_sec = seconds;
         tv.tv_usec = 0;
 
-        setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
-        setsockopt(this->sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
+        setsockopt(this->sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+        setsockopt(this->sock, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
     }
 };
