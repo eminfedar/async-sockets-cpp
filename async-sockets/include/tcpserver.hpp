@@ -16,30 +16,37 @@ public:
         setsockopt(this->sock,SOL_SOCKET,SO_REUSEPORT,&opt,sizeof(int));
     }
 
-    // Binding the server.
+    // Bind the custom address & port of the server.
     void Bind(const char* address, uint16_t port, FDR_ON_ERROR)
     {
-        if (inet_pton(AF_INET, address, &this->address.sin_addr) <= 0)
-        {
-            onError(errno, "Invalid address. Address type not supported.");
-            return;
+        int status = inet_pton(AF_INET, address, &this->address.sin_addr);
+        switch (status) {
+            case -1:
+                onError(errno, "Invalid address. Address type not supported.");
+                return;
+            case 0:
+                onError(errno, "AF_INET is not supported. Please send message to developer.");
+                return;
+            default:
+                break;
         }
 
         this->address.sin_family = AF_INET;
         this->address.sin_port = htons(port);
 
-        if (bind(this->sock, (const sockaddr*)&this->address, sizeof(this->address)) < 0)
+        if (bind(this->sock, (const sockaddr*)&this->address, sizeof(this->address)) == -1)
         {
             onError(errno, "Cannot bind the socket.");
             return;
         }
     }
-    void Bind(int port, FDR_ON_ERROR) { this->Bind("0.0.0.0", port, onError); }
+    // Bind the address(0.0.0.0) & port of the server.
+    void Bind(uint16_t port, FDR_ON_ERROR) { this->Bind("0.0.0.0", port, onError); }
 
-    // Start listening the server.
+    // Start listening incoming connections.
     void Listen(FDR_ON_ERROR)
     {
-        if (listen(this->sock, 20) < 0)
+        if (listen(this->sock, 20) == -1)
         {
             onError(errno, "Error: Server can't listen the socket.");
             return;
@@ -49,40 +56,31 @@ public:
         t.detach();
     }
 
-    // Overriding Close to add shutdown():
-    void Close()
-    {
-        shutdown(this->sock, SHUT_RDWR);
-        
-        BaseSocket::Close();
-    }
-
 private:
     static void Accept(TCPServer* server, FDR_ON_ERROR)
     {
         sockaddr_in newSocketInfo;
         socklen_t newSocketInfoLength = sizeof(newSocketInfo);
 
-        int newSock = -1;
+        int newSocketFileDescriptor = -1;
         while (true)
         {
-            if ((newSock = accept(server->sock, (sockaddr*)&newSocketInfo, &newSocketInfoLength)) < 0)
+            newSocketFileDescriptor = accept(server->sock, (sockaddr*)&newSocketInfo, &newSocketInfoLength);
+            if (newSocketFileDescriptor == -1)
             {
                 if (errno == EBADF || errno == EINVAL) return;
 
                 onError(errno, "Error while accepting a new connection.");
+
                 return;
             }
 
-            if (newSock >= 0)
-            {
-                TCPSocket* newSocket = new TCPSocket(onError, newSock);
-                newSocket->deleteAfterClosed = true;
-                newSocket->setAddressStruct(newSocketInfo);
+            TCPSocket* newSocket = new TCPSocket(onError, newSocketFileDescriptor);
+            newSocket->deleteAfterClosed = true;
+            newSocket->setAddressStruct(newSocketInfo);
 
-                server->onNewConnection(newSocket);
-                newSocket->Listen();
-            }
+            server->onNewConnection(newSocket);
+            newSocket->Listen();
         }
     }
 };

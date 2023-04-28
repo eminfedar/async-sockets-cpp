@@ -1,5 +1,5 @@
 CC		:= g++
-CFLAGS	:= --std=c++11
+CFLAGS	:= --std=c++11 -Wall -Wextra -Werror=conversion
 LIBS	:= -lpthread
 INC		:= -I../async-sockets/include
 RM		:= rm

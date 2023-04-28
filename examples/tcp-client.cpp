@@ -11,15 +11,14 @@ int main()
     });
 
     // Start receiving from the host.
-    tcpSocket.onMessageReceived = [](string message) {
-        cout << "Message from the Server: " << message << endl;
-    };
-    // If you want to use raw bytes instead of std::string:
-    /*
     tcpSocket.onRawMessageReceived = [](const char* message, int length) {
         cout << "Message from the Server: " << message << "(" << length << ")" << endl;
     };
-    */
+
+    // If you want to use std::string instead of const char*:
+    //tcpSocket.onMessageReceived = [](string message) {
+    //    cout << "Message from the Server: " << message << endl;
+    //};
     
     // On socket closed:
     tcpSocket.onSocketClosed = [](int errorCode){
