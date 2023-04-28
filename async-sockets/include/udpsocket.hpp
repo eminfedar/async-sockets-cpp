@@ -78,9 +78,6 @@ public:
     // Send with Connect()
     int Send(const char* bytes, size_t byteslength)
     {
-        if (this->isClosed)
-        return -1;
-
         int sent = 0;
         if ((sent = send(this->sock, bytes, byteslength, 0)) < 0)
         {

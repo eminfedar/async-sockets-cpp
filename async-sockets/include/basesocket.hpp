@@ -28,7 +28,6 @@ public:
         UDP = SOCK_DGRAM
     };
     sockaddr_in address;
-    std::atomic<bool> isClosed{false};
     constexpr static uint16_t BUFFER_SIZE = 0x1000; // 4096 bytes
 
 protected:
@@ -59,9 +58,6 @@ protected:
 // Methods
 public:
     virtual void Close() {
-        if(isClosed) return;
-
-        isClosed = true;
         close(this->sock);
     }
 

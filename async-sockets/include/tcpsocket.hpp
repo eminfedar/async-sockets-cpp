@@ -19,10 +19,7 @@ public:
     // Send TCP Packages
     int Send(const char* bytes, size_t byteslength)
     {
-        if (this->isClosed)
-            return -1;
-
-        int sent = 0;
+        int sent = -1;
         if ((sent = send(this->sock, bytes, byteslength, 0)) < 0)
         {
             perror("send");
@@ -30,6 +27,7 @@ public:
         return sent;
     }
     int Send(const std::string& message) { return this->Send(message.c_str(), message.length()); }
+
 
     void Connect(const char* host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
@@ -80,6 +78,10 @@ public:
 
         // Start listening from server:
         this->Listen();
+    }
+    void Connect(const std::string& host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
+    {
+        this->Connect(host.c_str(), port, onConnected, onError);
     }
 
     void Listen()

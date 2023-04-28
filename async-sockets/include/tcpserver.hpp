@@ -64,7 +64,7 @@ private:
         socklen_t newSocketInfoLength = sizeof(newSocketInfo);
 
         int newSock = -1;
-        while (!server->isClosed)
+        while (true)
         {
             if ((newSock = accept(server->sock, (sockaddr*)&newSocketInfo, &newSocketInfoLength)) < 0)
             {
@@ -74,7 +74,7 @@ private:
                 return;
             }
 
-            if (!server->isClosed && newSock >= 0)
+            if (newSock >= 0)
             {
                 TCPSocket* newSocket = new TCPSocket(onError, newSock);
                 newSocket->deleteAfterClosed = true;
