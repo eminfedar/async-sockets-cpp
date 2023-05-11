@@ -10,17 +10,18 @@ public:
     std::function<void(std::string, std::string, std::uint16_t)> onMessageReceived;
     std::function<void(const char*, ssize_t, std::string, std::uint16_t)> onRawMessageReceived;
 
+    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     explicit UDPSocket(bool useConnect = false, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, SocketType::UDP, socketId)
     {
         if (useConnect)
         {
             
-            std::thread t(Receive, this); // usage with Connect()
+            std::thread t(Receive<BUFFER_SIZE>, this); // usage with Connect()
             t.detach();
         }
         else
         {
-            std::thread t(ReceiveFrom, this);
+            std::thread t(ReceiveFrom<BUFFER_SIZE>, this);
             t.detach();
         }
     }
@@ -133,12 +134,13 @@ public:
     void Connect(const std::string& host, uint16_t port, FDR_ON_ERROR) { this->Connect(host.c_str(), port, onError); }
 
 private:
+    template <uint16_t BUFFER_SIZE>
     static void Receive(UDPSocket* udpSocket)
     {
-        char tempBuffer[UDPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recv(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0)) != -1)
+        while ((messageLength = recv(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0)) != -1)
         {
             tempBuffer[messageLength] = '\0';
             if (udpSocket->onMessageReceived)
@@ -149,15 +151,16 @@ private:
         }
     }
 
+    template <uint16_t BUFFER_SIZE>
     static void ReceiveFrom(UDPSocket* udpSocket)
     {
         sockaddr_in hostAddr;
         socklen_t hostAddrSize = sizeof(hostAddr);
 
-        char tempBuffer[UDPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recvfrom(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize)) != -1)
+        while ((messageLength = recvfrom(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize)) != -1)
         {
             tempBuffer[messageLength] = '\0';
             if (udpSocket->onMessageReceived)

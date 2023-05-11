@@ -17,6 +17,10 @@
 #define FDR_UNUSED(expr){ (void)(expr); } 
 #define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage)}
 
+#ifndef AS_DEFAULT_BUFFER_SIZE
+#define AS_DEFAULT_BUFFER_SIZE 0x1000 /*4096 bytes*/
+#endif
+
 class BaseSocket
 {
 public:
@@ -26,7 +30,6 @@ public:
         UDP = SOCK_DGRAM
     };
     sockaddr_in address;
-    constexpr static uint16_t BUFFER_SIZE = 0x1000; // 4096 bytes
 
     void Close() {
         shutdown(this->sock, SHUT_RDWR);

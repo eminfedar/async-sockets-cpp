@@ -22,6 +22,7 @@ public:
     ssize_t Send(const std::string& message) { return this->Send(message.c_str(), message.length()); }
 
     // Connect to a TCP Server with `uint32_t ipv4` & `uint16_t port` values
+    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(uint32_t ipv4, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
         this->address.sin_family = AF_INET;
@@ -45,9 +46,10 @@ public:
         onConnected();
 
         // Start listening from server:
-        this->Listen();
+        this->Listen<BUFFER_SIZE>();
     }
     // Connect to a TCP Server with `const char* host` & `uint16_t port` values
+    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(const char* host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
         struct addrinfo hints, *res, *it;
@@ -72,18 +74,20 @@ public:
 
         freeaddrinfo(res);
 
-        this->Connect((uint32_t)this->address.sin_addr.s_addr, port, onConnected, onError);
+        this->Connect<BUFFER_SIZE>((uint32_t)this->address.sin_addr.s_addr, port, onConnected, onError);
     }
     // Connect to a TCP Server with `const std::string& ipv4` & `uint16_t port` values
+    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(const std::string& host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
-        this->Connect(host.c_str(), port, onConnected, onError);
+        this->Connect<BUFFER_SIZE>(host.c_str(), port, onConnected, onError);
     }
 
     // Start another thread to listen the socket
+    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Listen()
     {
-        std::thread t(TCPSocket::Receive, this);
+        std::thread t(TCPSocket::Receive<BUFFER_SIZE>, this);
         t.detach();
     }
 
@@ -93,12 +97,13 @@ public:
     bool deleteAfterClosed = false;
 
 private:
+    template <uint16_t BUFFER_SIZE>
     static void Receive(TCPSocket* socket)
     {
-        char tempBuffer[TCPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recv(socket->sock, tempBuffer, TCPSocket::BUFFER_SIZE, 0)) > 0)
+        while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
         {
             tempBuffer[messageLength] = '\0';
             if(socket->onMessageReceived)
