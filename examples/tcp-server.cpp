@@ -6,10 +6,10 @@ using namespace std;
 int main()
 {
     // Initialize server socket..
-    TCPServer tcpServer;
+    TCPServer<> tcpServer;
 
     // When a new client connected:
-    tcpServer.onNewConnection = [&](TCPSocket *newClient) {
+    tcpServer.onNewConnection = [&](TCPSocket<> *newClient) {
         cout << "New client: [";
         cout << newClient->remoteAddress() << ":" << newClient->remotePort() << "]" << endl;
 

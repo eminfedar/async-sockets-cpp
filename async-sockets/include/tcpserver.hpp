@@ -3,11 +3,12 @@
 #include "tcpsocket.hpp"
 #include <thread>
 
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
 class TCPServer : public BaseSocket
 {
 public:
     // Event Listeners:
-    std::function<void(TCPSocket*)> onNewConnection = [](TCPSocket* sock){FDR_UNUSED(sock)};
+    std::function<void(TCPSocket<BUFFER_SIZE>*)> onNewConnection = [](TCPSocket<BUFFER_SIZE>* sock){FDR_UNUSED(sock)};
 
     explicit TCPServer(FDR_ON_ERROR): BaseSocket(onError, SocketType::TCP)
     {
@@ -57,7 +58,7 @@ public:
     }
 
 private:
-    static void Accept(TCPServer* server, FDR_ON_ERROR)
+    static void Accept(TCPServer<BUFFER_SIZE>* server, FDR_ON_ERROR)
     {
         sockaddr_in newSocketInfo;
         socklen_t newSocketInfoLength = sizeof(newSocketInfo);
@@ -75,7 +76,7 @@ private:
                 return;
             }
 
-            TCPSocket* newSocket = new TCPSocket(onError, newSocketFileDescriptor);
+            TCPSocket<BUFFER_SIZE>* newSocket = new TCPSocket<BUFFER_SIZE>(onError, newSocketFileDescriptor);
             newSocket->deleteAfterClosed = true;
             newSocket->setAddressStruct(newSocketInfo);
 

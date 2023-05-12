@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     // Initialize server socket..
-    UDPServer udpServer;
+    UDPServer<> udpServer;
 
     // onMessageReceived will run when a message received with information of ip & port of sender:
     /*udpServer.onMessageReceived = [&](string message, string ipv4, uint16_t port) {

@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     // Initialize socket.
-    TCPSocket tcpSocket([](int errorCode, std::string errorMessage){
+    TCPSocket<> tcpSocket([](int errorCode, std::string errorMessage){
         cout << "Socket creation error:" << errorCode << " : " << errorMessage << endl;
     });
 
@@ -26,7 +26,7 @@ int main()
     };
 
     // Connect to the host (with a custom buffer size).
-    tcpSocket.Connect<0xFFFF>("localhost", 8888, [&] {
+    tcpSocket.Connect("localhost", 8888, [&] {
         cout << "Connected to the server successfully." << endl;
 
         // Send String:

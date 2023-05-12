@@ -6,6 +6,7 @@
 #include <functional>
 #include <thread>
 
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
 class TCPSocket : public BaseSocket
 {
 public:
@@ -22,7 +23,6 @@ public:
     ssize_t Send(const std::string& message) { return this->Send(message.c_str(), message.length()); }
 
     // Connect to a TCP Server with `uint32_t ipv4` & `uint16_t port` values
-    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(uint32_t ipv4, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
         this->address.sin_family = AF_INET;
@@ -46,10 +46,9 @@ public:
         onConnected();
 
         // Start listening from server:
-        this->Listen<BUFFER_SIZE>();
+        this->Listen();
     }
     // Connect to a TCP Server with `const char* host` & `uint16_t port` values
-    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(const char* host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
         struct addrinfo hints, *res, *it;
@@ -74,20 +73,18 @@ public:
 
         freeaddrinfo(res);
 
-        this->Connect<BUFFER_SIZE>((uint32_t)this->address.sin_addr.s_addr, port, onConnected, onError);
+        this->Connect((uint32_t)this->address.sin_addr.s_addr, port, onConnected, onError);
     }
     // Connect to a TCP Server with `const std::string& ipv4` & `uint16_t port` values
-    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Connect(const std::string& host, uint16_t port, std::function<void()> onConnected = [](){}, FDR_ON_ERROR)
     {
-        this->Connect<BUFFER_SIZE>(host.c_str(), port, onConnected, onError);
+        this->Connect(host.c_str(), port, onConnected, onError);
     }
 
     // Start another thread to listen the socket
-    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     void Listen()
     {
-        std::thread t(TCPSocket::Receive<BUFFER_SIZE>, this);
+        std::thread t(TCPSocket::Receive, this);
         t.detach();
     }
 
@@ -97,7 +94,6 @@ public:
     bool deleteAfterClosed = false;
 
 private:
-    template <uint16_t BUFFER_SIZE>
     static void Receive(TCPSocket* socket)
     {
         char tempBuffer[BUFFER_SIZE];

@@ -4,24 +4,23 @@
 #include <string.h>
 #include <thread>
 
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
 class UDPSocket : public BaseSocket
 {
 public:
     std::function<void(std::string, std::string, std::uint16_t)> onMessageReceived;
     std::function<void(const char*, ssize_t, std::string, std::uint16_t)> onRawMessageReceived;
 
-    template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
     explicit UDPSocket(bool useConnect = false, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, SocketType::UDP, socketId)
     {
         if (useConnect)
         {
-            
-            std::thread t(Receive<BUFFER_SIZE>, this); // usage with Connect()
+            std::thread t(Receive, this); // usage with Connect()
             t.detach();
         }
         else
         {
-            std::thread t(ReceiveFrom<BUFFER_SIZE>, this);
+            std::thread t(ReceiveFrom, this);
             t.detach();
         }
     }
@@ -134,7 +133,6 @@ public:
     void Connect(const std::string& host, uint16_t port, FDR_ON_ERROR) { this->Connect(host.c_str(), port, onError); }
 
 private:
-    template <uint16_t BUFFER_SIZE>
     static void Receive(UDPSocket* udpSocket)
     {
         char tempBuffer[BUFFER_SIZE];
@@ -151,7 +149,6 @@ private:
         }
     }
 
-    template <uint16_t BUFFER_SIZE>
     static void ReceiveFrom(UDPSocket* udpSocket)
     {
         sockaddr_in hostAddr;
