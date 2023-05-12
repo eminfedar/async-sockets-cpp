@@ -1,4 +1,4 @@
-#include "../async-sockets/include/tcpsocket.hpp"
+#include "tcpsocket.hpp"
 #include <iostream>
 
 using namespace std;
@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     // Initialize socket.
-    TCPSocket tcpSocket([](int errorCode, std::string errorMessage){
+    TCPSocket<> tcpSocket([](int errorCode, std::string errorMessage){
         cout << "Socket creation error:" << errorCode << " : " << errorMessage << endl;
     });
 
@@ -25,7 +25,7 @@ int main()
         cout << "Connection closed: " << errorCode << endl;
     };
 
-    // Connect to the host.
+    // Connect to the host (with a custom buffer size).
     tcpSocket.Connect("localhost", 8888, [&] {
         cout << "Connected to the server successfully." << endl;
 

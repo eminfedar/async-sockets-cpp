@@ -1,4 +1,4 @@
-#include "../async-sockets/include/udpsocket.hpp"
+#include "udpsocket.hpp"
 #include <iostream>
 
 using namespace std;
@@ -10,7 +10,7 @@ int main()
     constexpr uint16_t PORT = 8888;
 
     // Initialize socket.
-    UDPSocket udpSocket(true); // "true" to use Connection on UDP. Default is "false".
+    UDPSocket<100> udpSocket(true); // "true" to use Connection on UDP. Default is "false".
     udpSocket.Connect(IP, PORT);
 
     // Send String:

@@ -3,7 +3,8 @@
 #include "udpsocket.hpp"
 #include <thread>
 
-class UDPServer : public UDPSocket
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
+class UDPServer : public UDPSocket<BUFFER_SIZE>
 {
 public:
     // Bind the custom address & port of the server.

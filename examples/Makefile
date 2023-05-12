@@ -1,22 +1,24 @@
 CC		:= g++
 CFLAGS	:= --std=c++11 -Wall -Wextra -Werror=conversion
 LIBS	:= -lpthread
-INC		:= -I../async-sockets/include
+INC		:= ../async-sockets/include
 RM		:= rm
+
+.PHONY: all clean
 
 all: tcp-client tcp-server udp-client udp-server
 
-tcp-client:
-	$(CC) $(CFLAGS) tcp-client.cpp $(INC) $(LIBS) -o tcp-client
+tcp-client: tcp-client.cpp $(INC)/tcpsocket.hpp
+	$(CC) $(CFLAGS) $< -I$(INC) $(LIBS) -o $@
 
-tcp-server:
-	$(CC) $(CFLAGS) tcp-server.cpp $(INC) $(LIBS) -o tcp-server
+tcp-server: tcp-server.cpp $(INC)/tcpserver.hpp
+	$(CC) $(CFLAGS) $< -I$(INC) $(LIBS) -o $@
 
-udp-client:
-	$(CC) $(CFLAGS) udp-client.cpp $(INC) $(LIBS) -o udp-client
+udp-client: udp-client.cpp $(INC)/udpsocket.hpp
+	$(CC) $(CFLAGS) $< -I$(INC) $(LIBS) -o $@
 
-udp-server:
-	$(CC) $(CFLAGS) udp-server.cpp $(INC) $(LIBS) -o udp-server
+udp-server: udp-server.cpp $(INC)/udpserver.hpp
+	$(CC) $(CFLAGS) $< -I$(INC) $(LIBS) -o $@
 
 clean:
 	$(RM) tcp-client

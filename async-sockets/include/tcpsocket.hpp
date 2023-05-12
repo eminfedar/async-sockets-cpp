@@ -6,6 +6,7 @@
 #include <functional>
 #include <thread>
 
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
 class TCPSocket : public BaseSocket
 {
 public:
@@ -95,10 +96,10 @@ public:
 private:
     static void Receive(TCPSocket* socket)
     {
-        char tempBuffer[TCPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recv(socket->sock, tempBuffer, TCPSocket::BUFFER_SIZE, 0)) > 0)
+        while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
         {
             tempBuffer[messageLength] = '\0';
             if(socket->onMessageReceived)

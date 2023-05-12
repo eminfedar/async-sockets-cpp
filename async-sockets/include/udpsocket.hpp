@@ -4,6 +4,7 @@
 #include <string.h>
 #include <thread>
 
+template <uint16_t BUFFER_SIZE = AS_DEFAULT_BUFFER_SIZE>
 class UDPSocket : public BaseSocket
 {
 public:
@@ -14,7 +15,6 @@ public:
     {
         if (useConnect)
         {
-            
             std::thread t(Receive, this); // usage with Connect()
             t.detach();
         }
@@ -135,10 +135,10 @@ public:
 private:
     static void Receive(UDPSocket* udpSocket)
     {
-        char tempBuffer[UDPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recv(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0)) != -1)
+        while ((messageLength = recv(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0)) != -1)
         {
             tempBuffer[messageLength] = '\0';
             if (udpSocket->onMessageReceived)
@@ -154,10 +154,10 @@ private:
         sockaddr_in hostAddr;
         socklen_t hostAddrSize = sizeof(hostAddr);
 
-        char tempBuffer[UDPSocket::BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE];
         ssize_t messageLength;
 
-        while ((messageLength = recvfrom(udpSocket->sock, tempBuffer, UDPSocket::BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize)) != -1)
+        while ((messageLength = recvfrom(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize)) != -1)
         {
             tempBuffer[messageLength] = '\0';
             if (udpSocket->onMessageReceived)
