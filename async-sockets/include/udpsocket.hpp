@@ -135,7 +135,7 @@ public:
 private:
     static void Receive(UDPSocket* udpSocket)
     {
-        char tempBuffer[BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE+1];
         ssize_t messageLength;
 
         while ((messageLength = recv(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0)) != -1)
@@ -154,7 +154,7 @@ private:
         sockaddr_in hostAddr;
         socklen_t hostAddrSize = sizeof(hostAddr);
 
-        char tempBuffer[BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE+1];
         ssize_t messageLength;
 
         while ((messageLength = recvfrom(udpSocket->sock, tempBuffer, BUFFER_SIZE, 0, (sockaddr* )&hostAddr, &hostAddrSize)) != -1)

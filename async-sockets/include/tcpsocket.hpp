@@ -96,7 +96,7 @@ public:
 private:
     static void Receive(TCPSocket* socket)
     {
-        char tempBuffer[BUFFER_SIZE];
+        char tempBuffer[BUFFER_SIZE+1];
         ssize_t messageLength;
 
         while ((messageLength = recv(socket->sock, tempBuffer, BUFFER_SIZE, 0)) > 0)
