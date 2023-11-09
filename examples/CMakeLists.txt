@@ -15,7 +15,7 @@ target_link_libraries(udp-client pthread)
 target_link_libraries(udp-server pthread)
 
 # Add -I../async-sockets
-target_include_directories(tcp-client PUBLIC ../async-sockets)
-target_include_directories(tcp-server PUBLIC ../async-sockets)
-target_include_directories(udp-client PUBLIC ../async-sockets)
-target_include_directories(udp-server PUBLIC ../async-sockets)
+target_include_directories(tcp-client PUBLIC ../async-sockets/include)
+target_include_directories(tcp-server PUBLIC ../async-sockets/include)
+target_include_directories(udp-client PUBLIC ../async-sockets/include)
+target_include_directories(udp-server PUBLIC ../async-sockets/include)
